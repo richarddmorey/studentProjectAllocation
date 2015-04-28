@@ -1,0 +1,35 @@
+
+##################
+students file:
+
+row i               : student i's preferred projects, in descending order of preference 
+
+variable number of columns
+
+column 1            : unique student id
+column 2-column n_i : list of project names
+##################
+
+##################
+lecturers file:
+
+row i               : lecturer i's preferences, in descending order of preference 
+
+variable number of columns
+
+column 1            : unique lecturer id
+column 2            : lecturer capacity
+column 3-column n_i : list of student ids, in descending order of preference 
+##################
+
+##################
+projects file:
+
+row i               : project i specification 
+
+three columns
+
+column 1            : unique project id
+column 2            : project capacity
+column 3            : lecturer that offers project 
+##################
