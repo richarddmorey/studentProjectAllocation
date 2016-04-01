@@ -53,6 +53,7 @@ my $iterationLimit = -1;
 srand $seed;
 
 my %studPrefs  = ( ); # student preferences for projects
+my %origStudPrefs  = ( ); # student preferences for projects (immutable)
 my %lectPrefs  = ( ); # lecturer preferences for students
 my %lectCap    = ( ); # lecturer capacities
 my %projLect   = ( ); # hash with projects as keys, and corresponding lecturer as elements
@@ -85,6 +86,7 @@ while( <STUDENTS> )
 	$key = shift(@_);
 	die ("Error: duplicate student found in $studentsFN: $key\n") if exists $studPrefs{ $key };
 	@{$studPrefs{ $key }} = uniq @_;
+	@{$origStudPrefs{ $key }} = uniq @_;
 	push(@unassignedStudents, $key);
 }
 close STUDENTS;
@@ -332,7 +334,8 @@ open ( OUTPUT, ">", $outStudentsFN ) or die("Could not open output file $outStud
 print OUTPUT "UNASSIGNED: @unassignedStudents\n";
 while (($key, $value) = each(%studAssignments)){
 	# Output student, project, and the preference
-	print OUTPUT $key." ".$value."\n";
+	my $idx = firstidx { $_ eq "$value" } @{$origStudPrefs{$key}};
+	print OUTPUT $key." ".$value." " . ($idx +1)."\n";
 }
 close OUTPUT;
 
