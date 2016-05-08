@@ -53,6 +53,7 @@ my $iterationLimit = -1;
 srand $seed;
 
 my %studPrefs  = ( ); # student preferences for projects
+my %origStudPrefs  = ( ); # student preferences for projects (immutable)
 my %lectPrefs  = ( ); # lecturer preferences for students
 my %lectCap    = ( ); # lecturer capacities
 my %projLect   = ( ); # hash with projects as keys, and corresponding lecturer as elements
@@ -85,6 +86,7 @@ while( <STUDENTS> )
 	$key = shift(@_);
 	die ("Error: duplicate student found in $studentsFN: $key\n") if exists $studPrefs{ $key };
 	@{$studPrefs{ $key }} = uniq @_;
+	@{$origStudPrefs{ $key }} = uniq @_;
 	push(@unassignedStudents, $key);
 }
 close STUDENTS;
@@ -141,7 +143,7 @@ while (($key, $value) = each(%projLect)){
 while (($key, $value) = each(%projCap)){
 	($value > 0) or die("Project $key capacity < 1 ($value)."); 
 }
-while (($key, $value) = each(%LectCap)){
+while (($key, $value) = each(%lectCap)){
 	($value > 0) or die("Lecturer $key capacity < 1 ($value)."); 
 }
 ############### END input checking
@@ -149,8 +151,8 @@ while (($key, $value) = each(%LectCap)){
 
 # Create projected preference list - first pass; add students not on lecturer's list
 while (($key, $value) = each(%studPrefs)){
-	foreach $project (@{$value}){
-		$idx = firstidx { $_ eq $key } @{$lectPrefs{$projLect{$project}}};
+	foreach my $project (@{$value}){
+		my $idx = firstidx { $_ eq $key } @{$lectPrefs{$projLect{$project}}};
 		if($idx == -1){
 			push(@{$lectPrefs{$projLect{$project}}}, $key);
 		}
@@ -158,8 +160,8 @@ while (($key, $value) = each(%studPrefs)){
 }
 # Create projected preference list - second pass; add students to projected list
 while (($key, $value) = each(%projLect)){
-	foreach $student (@{$lectPrefs{$value}}){
-		$idx = firstidx { $_ eq $key } @{$studPrefs{$student}};
+	foreach my $student (@{$lectPrefs{$value}}){
+		my $idx = firstidx { $_ eq $key } @{$studPrefs{$student}};
 		push( @{$projectedPrefs{ $key }}, $student) if($idx>-1);
 	}
 }
@@ -298,13 +300,13 @@ while ( !$done ){
 
 if($distributeUnassigned){
 	print "***Distributing remaining students.\n" if($updates);
-	@unassignedCopy = @unassignedStudents;
-	foreach $student (@unassignedCopy){
-		@freeProj = freeProjects(\%projAssignments, \%projCap, \%lectAssignments, \%lectCap, \%lectProj);
+	my @unassignedCopy = @unassignedStudents;
+	foreach my $student (@unassignedCopy){
+		my @freeProj = freeProjects(\%projAssignments, \%projCap, \%lectAssignments, \%lectCap, \%lectProj);
 		if( scalar @freeProj ){
 			# Assign to random free project
-			$project = $freeProj[rand @freeProj];
-			$lecturer = $projLect{$project};
+			my $project = $freeProj[rand @freeProj];
+			my $lecturer = $projLect{$project};
 			
 			print "Assigning student $student to project $project of lecturer $lecturer.\n" if($updates);
 			
@@ -331,7 +333,9 @@ if($distributeUnassigned){
 open ( OUTPUT, ">", $outStudentsFN ) or die("Could not open output file $outStudentsFN : $!");
 print OUTPUT "UNASSIGNED: @unassignedStudents\n";
 while (($key, $value) = each(%studAssignments)){
-	print OUTPUT $key." ".$value."\n";
+	# Output student, project, and the preference
+	my $idx = firstidx { $_ eq "$value" } @{$origStudPrefs{$key}};
+	print OUTPUT $key." ".$value." " . ($idx +1)."\n";
 }
 close OUTPUT;
 
@@ -353,7 +357,7 @@ close OUTPUT;
 
 # output project assignments to file
 splice(@underCapacity,0);
-while (($project, $value) = each(%projLect)){
+while ((my $project, my $value) = each(%projLect)){
 	if( (scalar @{$projAssignments{$project}}) < $projCap{$project}){
 		push(@underCapacity, "$project (".( $projCap{$project} - (scalar @{$projAssignments{$project}}) )." spots)");
 	}
