@@ -57,16 +57,12 @@ sub deleteSuccessorPrefs {
 	# else, we have successors, so delete them
 	@_ = splice(@{$ref_projectedPrefs}, $idx + 1);
 	
-	#print("Successors: ");		
-	
 	foreach $value (@_){
-		#print("$value ");
 		do{
 			$idx = firstidx { $_ eq $project } @{${$ref_studPrefs}{$value}};	
 			splice(@{${$ref_studPrefs}{$value}}, $idx, 1) if($idx > -1);
 		} until($idx==-1);
 	}
-	#print("\n");
 }
 
 sub deleteSuccessorPrefsAll {
@@ -88,11 +84,8 @@ sub deleteSuccessorPrefsAll {
 	
 	# else, we have successors, so delete them
 	@_ = splice(@{$ref_lectPrefs}, $idx + 1);
-	
-	#print("SuccessorsAll: ");		
 			
 	foreach $value (@_){
-		#print("$value ");
 		foreach $project (@{$ref_lectProj}){
 			do{
 				$idx = firstidx { $_ eq $value } @{${$ref_projectedPrefs}{$project}};
@@ -104,8 +97,6 @@ sub deleteSuccessorPrefsAll {
 			} until($idx==-1);
 		}
 	}	
-	
-	#print("\n");
 	
 }
 

@@ -7,6 +7,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use studentAllocation;
 use List::Util qw(shuffle);
+use Tie::IxHash;
 
 # Student allocation algorithm
 # Richard D. Morey, 18 March 2013
@@ -20,7 +21,7 @@ use List::Util qw(shuffle);
 # CONFIGURATION ###########################################################
 
 # print updates?
-my $updates      = 1; # 0 for no updates 
+my $updates      = 0; # 0 for no updates 
 
 # distribute unassigned at the end?
 my $distributeUnassigned = 1;
@@ -53,8 +54,11 @@ my $iterationLimit = -1;
 srand $seed;
 
 my %studPrefs  = ( ); # student preferences for projects
+tie %studPrefs, 'Tie::IxHash';
 my %origStudPrefs  = ( ); # student preferences for projects (immutable)
+tie %origStudPrefs, 'Tie::IxHash';
 my %lectPrefs  = ( ); # lecturer preferences for students
+tie %lectPrefs, 'Tie::IxHash';
 my %lectCap    = ( ); # lecturer capacities
 my %projLect   = ( ); # hash with projects as keys, and corresponding lecturer as elements
 my %lectProj   = ( ); # hash with lecturers as keys, and corresponding project arrays as elements
@@ -220,7 +224,6 @@ while ( !$done ){
 			# Check to see if project is overloaded
 			if( (scalar @{$projAssignments{$currentProject}}) > $projCap{$currentProject}){
 
-				
 				$worst = findWorst($currentStudent, \@{$projectedPrefs{$currentProject}}, 
 								\@{$projAssignments{$currentProject}});				
 				
@@ -253,7 +256,6 @@ while ( !$done ){
 
 				$worst = findWorst($currentStudent, \@{$projectedPrefs{$currentProject}}, 
 								\@{$projAssignments{$currentProject}});				
-
 				if($updates){
 					print "Project $currentProject is full: removing successors to $worst.\n";
 				}

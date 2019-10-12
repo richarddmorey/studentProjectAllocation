@@ -1,0 +1,21 @@
+UNDERCAPACITY: 
+p14 s26 s29 s30 s39 s43
+p8 s13 s18 s24 s41 s50
+p12 s42 s70 s73 s76 s81
+p17 s12 s23 s63 s71 s89
+p4 s21 s55 s62 s66 s67
+p10 s3 s4 s5 s20 s57
+p5 s11 s15 s69 s85 s86
+p11 s31 s37 s38 s44 s97
+p15 s48 s75 s99 s91 s95
+p9 s47 s79 s82 s87 s94
+p6 s22 s64 s80 s83 s84
+p20 s90 s92 s96 s98 s100
+p19 s25 s28 s36 s53 s65
+p3 s7 s9 s14 s16 s32
+p2 s17 s54 s56 s58 s78
+p13 s35 s46 s61 s68 s93
+p1 s1 s6 s10 s27 s74
+p16 s45 s51 s52 s72 s88
+p18 s33 s34 s40 s49 s59
+p7 s2 s8 s19 s60 s77
