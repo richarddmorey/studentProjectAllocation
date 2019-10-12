@@ -1,0 +1,12 @@
+Package: studentAllocation
+Type: Package
+Title: Algorithms for Allocation of Students to Projects
+Version: 0.1
+Date: 2019-10-11
+Author: Richard D. Morey
+Maintainer: Richard D. Morey <richarddmorey@gmail.com>
+Description: Implementation of Abraham, Irving, and Manlove's (2007) SPA-student algorithm
+License: MIT
+Imports: 
+    dplyr,
+    settings
