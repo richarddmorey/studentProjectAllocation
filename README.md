@@ -23,18 +23,26 @@ devtools::install_github('richarddmorey/studentProjectAllocation',
 Use the functions `read_lecturer_file`, `read_project_file`, and `read_student_file` to read in the respective data files. See [fileFormatDetails.txt](https://github.com/richarddmorey/studentProjectAllocation/blob/master/fileFormatDetails.txt) for more information. For instance, you can read in the example data files that come with the package:
 
 ```
+stud_list <- studentAllocation::read_student_file(
+  system.file("examples/original/students.txt", package = "studentAllocation")
+)
 lect_list <- studentAllocation::read_lecturer_file(
   system.file("examples/original/lecturers.txt", package = "studentAllocation")
 )
 proj_list <- studentAllocation::read_project_file(
   system.file("examples/original/projects.txt", package = "studentAllocation")
 )
-stud_list <- studentAllocation::read_student_file(
-  system.file("examples/original/students.txt", package = "studentAllocation")
-)
 ```
 
-This will yield three list objects containing the information in the files.
+This will yield three list objects containing the information in the files. If you have your own data files, you can read them in any way you like as long as they're in the same basic format as the lists produced by the `read_*_file` functions:
+
+| Object                    | Length            | Each name element is | Element contents                                            |
+|:--------------------------|:------------------|:---------------------|:------------------------------------------------------------|
+| Student preference list   | Num. of students  | A student ID         | Char. vector of student project preferences (project IDs)   |
+| Lecturer preference list  | Num. of lecturers | A lecturer ID        | Two elements: `cap` (integer, lecturer cap); `students` (char. vector, lecturer preferences for students (student IDs) |
+| Project descriptions      | Num. of projects  | A project ID         | Two elements: `cap` (integer, project cap); `lecturer` (char. vector of length 1, lecturer ID that offers this project)  |
+
+Right now, some consistency checking is done when loading files, but none by the algorithm itself, so ensure that your input is clean if you're creating your own input lists (e.g., no duplicate preferences, all IDs accounted for in the respective list files, etc).
 
 ### Running the algorithm
 
