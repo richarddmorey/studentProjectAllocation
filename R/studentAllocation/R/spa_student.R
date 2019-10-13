@@ -1,4 +1,4 @@
-sta_student <- function( student_list, lecturer_list, project_list,
+spa_student <- function( student_list, lecturer_list, project_list,
                          randomize = pkg_options()$randomize,
                          iteration_limit = pkg_options()$iteration_limit,
                          time_limit = pkg_options()$time_limit,
@@ -108,15 +108,15 @@ sta_student <- function( student_list, lecturer_list, project_list,
   
   ## Distribute unassigned
   
-  unallocated_after_sta <- e$unallocated_students
+  unallocated_after_spa <- e$unallocated_students
   
-  allocate_log(iterations_done," Remaining students: ", paste(unallocated_after_sta, collapse = " "), ".")
+  allocate_log(iterations_done," Remaining students: ", paste(unallocated_after_spa, collapse = " "), ".")
   
   if( distribute_unallocated ){
     
     allocate_log(" ***Distributing remaining students.***")
     
-    for( student in unallocated_after_sta ){
+    for( student in unallocated_after_spa ){
       project <- random_free_project( e )
       
       if( is.null(project) ) break # No free projects
@@ -145,7 +145,7 @@ sta_student <- function( student_list, lecturer_list, project_list,
   
   e$iterations = iterations_done
   e$time = Sys.time() - start_time
-  e$unallocated_after_sta <- unallocated_after_sta
+  e$unallocated_after_spa <- unallocated_after_spa
   return( e )
   
 }

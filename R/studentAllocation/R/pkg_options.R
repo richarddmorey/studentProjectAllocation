@@ -22,7 +22,7 @@ MYPKGOPTIONS <- settings::options_manager(
 #'  \item{\code{iteration_limit}}{(\code{integer};Inf) limit on the number of iterations for the algorithm (Inf for no limit) }
 #'  \item{\code{time_limit}}{(\code{numeric};60) Limit in seconds on the time the algorithm runs}
 #'  \item{\code{distribute_unallocated}}{(\code{logical};TRUE) Randomly distribute the unallocated students after the algorithm runs? }
-#'  \item{\code{favor_student_prefs}}{(\code{logical};FALSE) Favor student preferences over lecturer preferences when ordering students? STA-Student default is FALSE. }
+#'  \item{\code{favor_student_prefs}}{(\code{logical};FALSE) Favor student preferences over lecturer preferences when ordering students? SPA-Student default is FALSE. }
 #'  \item{\code{print_log}}{(\code{logical};FALSE)  Print log messages?}
 #' }
 #'
