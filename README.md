@@ -10,8 +10,7 @@ There are two versions of the algorithm, one (older) written in Perl (under `per
 
 ## R version (`R/studentAllocation`)
 
-First, in
-ll the `devtools` package in R. Then use it to install the `studentAllocation` package from this repository:
+First, install the `devtools` package in R. Then use it to install the `studentAllocation` package from this repository:
 
 ```
 devtools::install_github('richarddmorey/studentProjectAllocation', 
