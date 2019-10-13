@@ -35,7 +35,7 @@ proj_list <- studentAllocation::read_project_file(
 
 This will yield three list objects containing the information in the files. If you have your own data files, you can read them in any way you like as long as they're in the same basic format as the lists produced by the `read_*_file` functions:
 
-| Object                    | Length            | Each name element is | Element contents                                            |
+| Object                    | Length            | Each element name is | Element contents                                            |
 |:--------------------------|:------------------|:---------------------|:------------------------------------------------------------|
 | Student preference list   | Num. of students  | A student ID         | Char. vector of student project preferences (project IDs)   |
 | Lecturer preference list  | Num. of lecturers | A lecturer ID        | Two elements: `cap` (integer, lecturer cap); `students` (char. vector, lecturer preferences for students (student IDs) |
