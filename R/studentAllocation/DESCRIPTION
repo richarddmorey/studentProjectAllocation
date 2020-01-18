@@ -9,4 +9,8 @@ Description: Implementation of Abraham, Irving, and Manlove's (2007) SPA-student
 License: MIT
 Imports: 
     dplyr,
-    settings
+    settings,
+    shiny,
+    rio,
+    shinyjs
+RoxygenNote: 7.0.2

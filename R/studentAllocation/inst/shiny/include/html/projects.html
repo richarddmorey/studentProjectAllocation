@@ -1,0 +1,41 @@
+<p>
+
+All files should be plain text files. Information in each file is given in rows, one for each lecturer, project, or student (depending on the file).
+
+<p>
+
+The items in a row of a file are separated by spaces (so remember <b>not to include spaces</b> in any of your IDs).
+
+<p>
+<a href="https://github.com/richarddmorey/studentProjectAllocation/blob/master/R/studentAllocation/inst/examples/original/projects.txt" target="_blank">Example projects file</a>
+
+<p>
+
+Each row of the projects file defines the parameters of a project. There are three main pieces of information per project:
+
+<p>
+
+<ol>
+	<li>Project ID (character string, no spaces)</li>
+	<li>Project capacity (integer)
+	<li>Lecturer ID (character string, no spaces) indicating which lecturer offers the project</li>
+</ol>
+
+<p>
+
+Each row should define a unique project (no duplicate IDs across rows) and all lecturer IDs should correspond to a row of the lecturers file.
+
+<p>
+
+The projects file will have three columns in every row.
+
+<h4>Example rows</h4>
+
+<pre>
+knot_theory 3 CHEN<br/>
+prime_numbers 2 CHEN<br/>
+real_analysis 4 WILLIAMS
+</pre>
+
+The example above defines three projects, two of which are offered by CHEN and one of which is offered by WILLIAMS.
+

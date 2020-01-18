@@ -1,0 +1,315 @@
+library(shiny)
+library(shinydashboard)
+library(shinyjs)
+
+vals <- reactiveValues(lect_list = NULL,
+                       proj_list = NULL,
+                       stud_list = NULL,
+                       algo_ready = FALSE,
+                       log = NULL, 
+                       output_file = NULL)
+
+create_output_file <- function(allocation_output){
+  
+  # set up output directory
+  td = tempdir(check = TRUE)
+  save_dir = tempfile(pattern = "allocation_", tmpdir = td)
+  if(dir.exists(save_dir))
+    unlink(save_dir, recursive = TRUE)
+  dir.create(save_dir)
+
+  lecturer_allocation_fn = file.path(save_dir, "lecturer_allocation.csv")
+  rio::export(
+    x = studentAllocation::neat_lecturer_output(allocation_output),
+    file = lecturer_allocation_fn
+  )
+
+  project_allocation_fn = file.path(save_dir, "project_allocation.csv")
+  rio::export(
+    x = studentAllocation::neat_project_output(allocation_output),
+    file = project_allocation_fn
+  )
+
+  student_allocation_fn = file.path(save_dir, "student_allocation.csv")
+  rio::export(
+    x = studentAllocation::neat_student_output(allocation_output),
+    file = student_allocation_fn
+  )
+
+  if(length(allocation_output$unallocated_students)){
+    unallocated_students_fn = file.path(save_dir, "unallocated_students.txt")
+    cat(file = unallocated_students_fn,
+        allocation_output$unallocated_students
+    )
+  }
+  
+  # zip up contents
+  zip_file = tempfile(tmpdir = td, pattern = "allocation_", fileext = ".zip")
+  zip::zipr(zipfile = zip_file, files = save_dir)
+  
+  # Clean up folder
+  if(dir.exists(save_dir))
+    unlink(save_dir, recursive = TRUE)
+  
+  return( zip_file )
+
+}
+
+
+# Define UI for data upload app ----
+ui <- dashboardPage(
+  dashboardHeader(title = "Project allocation"),
+
+  # Sidebar layout with input and output definitions ----
+  dashboardSidebar(
+    checkboxInput("opt_randomize", "Randomize before", FALSE),
+    checkboxInput("opt_distribute", "Distribute unallocated", TRUE),
+    checkboxInput("opt_favor_student", "Favor student prefs", FALSE),
+    numericInput("opt_max_time", "Time limit (s)", 15, min = 1, max = 60, step = 1),
+    numericInput("opt_max_iters", "Iteration limit", 0, min = 0, step = 25)
+  ),
+    # Main panel for displaying outputs ----
+  dashboardBody(
+    useShinyjs(),
+    tabBox( width = 12,
+      tabPanel("Introduction", htmlOutput("intro")),
+      tabPanel("Lecturers",
+               fileInput("lect_file", "Choose lecturers file",
+                         multiple = FALSE,
+                         accept = "text/plain"),
+               verbatimTextOutput("lect_check"),
+               htmlOutput("lecturer_help"),
+      ),
+      tabPanel("Projects",
+               fileInput("proj_file", "Choose projects file",
+                         multiple = FALSE,
+                         accept = "text/plain"),
+               verbatimTextOutput("proj_check"),
+               htmlOutput("projects_help"),
+      ),
+      tabPanel("Students",
+               fileInput("stud_file", "Choose students file",
+                         multiple = FALSE,
+                         accept = "text/plain"),
+               verbatimTextOutput("stud_check"),
+               htmlOutput("students_help"),
+      ),
+      tabPanel("Allocation", 
+               htmlOutput("algo_output"),
+               hidden(
+                 div(
+                   id = "download_all_div",
+                   downloadLink('download_output', 'Download allocation output')
+                 )
+               ),
+               hr(),
+               actionButton("toggle_log", "Show/hide log"),
+               hidden(
+                 div( id = "log_div",
+                      verbatimTextOutput("log_text")
+                 )
+               )
+      ),
+      tabPanel("Options help", htmlOutput("options_help"))
+    )
+  )
+)
+
+# Define server logic to read selected file ----
+server <- function(input, output, session) {
+  
+  addClass(selector = "body", class = "sidebar-collapse")
+  
+  observeEvent(input$toggle_log,{
+    shinyjs::toggle("log_div")
+  })
+  
+  observeEvent(vals$log,{
+    if(is.null(vals$log))
+      shinyjs::hide("log_div")
+  })
+  
+  output$download_output <- downloadHandler(
+    filename = function() {
+       paste('allocation-', Sys.Date(), '.zip', sep='')
+      },
+    content = function(con) {
+      fn = vals$output_file
+      if(!is.null(fn)){
+        if(file.exists(fn)){
+          if(file.size(fn)>0){
+            file.copy(fn, con)
+          }
+        } 
+      }else{
+        return(NULL)
+      }
+    }
+  )
+  
+  output$intro <- renderUI({
+    x <- paste0(readLines("include/html/intro.html"))
+    return(HTML(x))
+  })
+
+  output$lecturer_help <- renderUI({
+    x <- paste0(readLines("include/html/lecturers.html"))
+    return(HTML(x))
+  })
+  
+  output$students_help <- renderUI({
+    x <- paste0(readLines("include/html/students.html"))
+    return(HTML(x))
+  })
+  
+  output$projects_help <- renderUI({
+    x <- paste0(readLines("include/html/projects.html"))
+    return(HTML(x))
+  })
+  
+  output$options_help <- renderUI({
+    x <- paste0(readLines("include/html/options.html"))
+    return(HTML(x))
+  })
+  
+  output$lect_check <- renderText({
+    
+    req(input$lect_file)
+    
+    tryCatch(
+      {
+        lect_list <- studentAllocation::read_lecturer_file(input$lect_file$datapath)
+      },
+      error = function(e) {
+        vals$algo_ready = FALSE
+        vals$log = NULL
+        # return a safeError if a parsing error occurs
+        stop(safeError(e))
+      }
+    )
+    
+    vals$lect_list = lect_list  
+    
+    if( is.list(vals$lect_list) &
+        is.list(vals$proj_list) &
+        is.list(vals$stud_list)
+    ) vals$algo_ready = TRUE
+    
+    return(
+      paste( length(lect_list), "lecturer preferences loaded.")
+    )
+  })
+  
+  output$proj_check <- renderText({
+    
+    req(input$proj_file)
+    
+    tryCatch(
+      {
+        proj_list <- studentAllocation::read_project_file(input$proj_file$datapath)
+      },
+      error = function(e) {
+        vals$algo_ready = FALSE
+        vals$log = NULL
+        # return a safeError if a parsing error occurs
+        stop(safeError(e))
+      }
+    )
+    
+    vals$proj_list = proj_list  
+    
+    if( is.list(vals$lect_list) &
+        is.list(vals$proj_list) &
+        is.list(vals$stud_list)
+    ) vals$algo_ready = TRUE
+    
+    return(
+      paste( length(proj_list), "project definitions loaded.")
+    )
+  })
+
+  output$stud_check <- renderText({
+    
+    req(input$stud_file)
+    
+    tryCatch(
+      {
+        stud_list <- studentAllocation::read_student_file(input$stud_file$datapath)
+      },
+      error = function(e) {
+        vals$algo_ready = FALSE
+        vals$log = NULL
+        # return a safeError if a parsing error occurs
+        stop(safeError(e))
+      }
+    )
+    
+    vals$stud_list = stud_list  
+    
+    if( is.list(vals$lect_list) &
+        is.list(vals$proj_list) &
+        is.list(vals$stud_list)
+        ) vals$algo_ready = TRUE
+    
+    return(
+      paste( length(stud_list), "student preferences loaded.")
+    )
+  })
+  
+  output$algo_output <- renderUI({
+    
+    req(vals$algo_ready)
+    studentAllocation::pkg_options(print_log = TRUE)
+    
+    tryCatch(
+      {
+        algo_messages <- capture.output(
+          type = "message",
+        {
+        algo_output <- studentAllocation::spa_student(
+          vals$stud_list,
+          vals$lect_list,
+          vals$proj_list,
+          randomize = input$opt_randomize,
+          distribute_unallocated = input$opt_distribute,
+          favor_student_prefs = input$opt_favor_student,
+          time_limit = input$opt_max_time,
+          iteration_limit = ifelse(input$opt_max_iters < 1,
+                                   Inf,
+                                   input$opt_max_iters)
+          )
+        })
+      },
+      error = function(e) {
+        #vals$algo_ready = FALSE
+        vals$log = NULL
+        shinyjs::hide("download_all_div")
+        # return a safeError if a parsing error occurs
+        stop(safeError(e))
+      }
+    )
+    vals$output_file = create_output_file( algo_output )
+    shinyjs::show("download_all_div")
+    vals$log = algo_messages
+    
+    paste0("Performed ", algo_output$iterations,
+          " iterations in ", round(algo_output$time, 3), " seconds. ",
+          " There are ", length(algo_output$unallocated_students), " unallocated students. ",
+          length(algo_output$unallocated_after_spa), 
+          " students (",
+          round(100 * length(algo_output$unallocated_after_spa) / length(vals$stud_list))
+          ,"%) ",
+          " were assigned random projects.")
+    
+  })
+
+  output$log_text <- renderText({
+    req(vals$log)
+    paste(vals$log, collapse = "\n")
+  })
+    
+}
+
+
+# Create Shiny app ----
+shinyApp(ui, server)

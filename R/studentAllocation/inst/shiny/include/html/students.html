@@ -1,0 +1,40 @@
+<p>
+
+All files should be plain text files. Information in each file is given in rows, one for each lecturer, project, or student (depending on the file).
+
+<p>
+
+The items in a row of a file are separated by spaces (so remember <b>not to include spaces</b> in any of your IDs).
+
+<p>
+<a href="https://github.com/richarddmorey/studentProjectAllocation/blob/master/R/studentAllocation/inst/examples/original/students.txt" target="_blank">Example student file</a>
+
+<p>
+
+Each row of the students file indicates the preferences of a particular student. There are three main pieces of information per student:
+
+<p>
+
+<ol>
+	<li>Student ID (character string, no spaces)</li>
+	<li>List of project IDs (character strings) separated by spaces, in descending order of preference</li>
+</ol>
+
+<p>
+
+Each row should define a unique student (no duplicate IDs across rows) and all projects IDs given in the preference lists should correspond to a row of the projects file.
+
+<p>
+
+Because the length of the list of projects might differ between students, the number of columns per row in this file will be variable, but will be at least one.
+
+<h4>Example rows</h4>
+
+<pre>
+stu_1135 knot_theory prime_numbers<br/>
+stu_4052 real_analysis knot_theory<br/>
+stu_3942<br/>
+stu_5861 prime_numbers real_analysis knot_theory<br/>
+</pre>
+
+The example above defines four students with different preference orders. Note that a student does not have to have a preference list, nor do they need to rank every project.
