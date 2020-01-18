@@ -19,7 +19,13 @@ devtools::install_github('richarddmorey/studentProjectAllocation',
 
 ### Using the shiny app
 
+The package includes a [shiny](https://shiny.rstudio.com/) app so that you can use the funtions from a graphical user interface. Run it with the `shiny_spa_student()` function:
 
+```
+studentAllocation::shiny_spa_student()
+```
+
+Full instructions for using the shiny app are included in the interface. You may not even have to read any further than this.
 
 ### Read in the input files
 
