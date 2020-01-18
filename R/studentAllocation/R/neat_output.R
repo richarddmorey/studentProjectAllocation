@@ -5,7 +5,7 @@
 #'
 #' @return
 #' @export
-#' @import dplyr mutate tibble `%>%`
+#' @importFrom dplyr mutate tibble `%>%`
 #'
 #' @examples
 neat_lecturer_output <- function( allocation_output ){
@@ -34,7 +34,7 @@ neat_lecturer_output <- function( allocation_output ){
 #'
 #' @return
 #' @export
-#' @import dplyr mutate tibble `%>%`
+#' @importFrom dplyr mutate tibble `%>%`
 #'
 #' @examples
 neat_project_output <- function( allocation_output ){
@@ -64,7 +64,7 @@ neat_project_output <- function( allocation_output ){
 #'
 #' @return
 #' @export
-#' @import dplyr mutate tibble `%>%`
+#' @importFrom dplyr mutate tibble `%>%`
 #'
 #' @examples
 neat_student_output <- function( allocation_output ){

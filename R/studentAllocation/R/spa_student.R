@@ -1,3 +1,18 @@
+#' Run the SPA student algorithm of Abraham et al (2007)
+#'
+#' @param student_list A list of student preferences, in the format output by `read_student_file`
+#' @param lecturer_list A list of lecturer preferences, in the format output by `read_lecturer_file`
+#' @param project_list A list of project definitions, in the format output by `read_project_file`
+#' @param randomize Randomize student order before starting the algorithm?
+#' @param iteration_limit Iteration limit on the algorithm
+#' @param time_limit Time limit in seconds on the algorithm
+#' @param distribute_unallocated Randomly distribute unallocated students at the end?
+#' @param favor_student_prefs Favor student preferences? Do not set this to TRUE
+#'
+#' @return
+#' @export
+#'
+#' @examples
 spa_student <- function( student_list, lecturer_list, project_list,
                          randomize = pkg_options()$randomize,
                          iteration_limit = pkg_options()$iteration_limit,
