@@ -17,6 +17,10 @@ devtools::install_github('richarddmorey/studentProjectAllocation',
                          subdir = "R/studentAllocation")
 ```
 
+### Using the shiny app
+
+
+
 ### Read in the input files
 
 Use the functions `read_lecturer_file`, `read_project_file`, and `read_student_file` to read in the respective data files. See [fileFormatDetails.txt](https://github.com/richarddmorey/studentProjectAllocation/blob/master/fileFormatDetails.txt) for more information. For instance, you can read in the example data files that come with the package:
