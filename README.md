@@ -25,7 +25,14 @@ The package includes a [shiny](https://shiny.rstudio.com/) app so that you can u
 studentAllocation::shiny_spa_student()
 ```
 
+The interface looks something like this:
+
+![student project allocation shiny interface](https://drsmorey.org/my_images/student_allocation_shiny_large.png)
+
+
 Full instructions for using the shiny app are included in the interface. You may not even have to read any further than this.
+
+You can also access the shiny app [here](https://richarddmorey.shinyapps.io/studentAllocation/). This link is for demonstration. If you plan on using the app often, though, please do it on your own computer. 
 
 ### Read in the input files
 
