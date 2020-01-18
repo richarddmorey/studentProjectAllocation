@@ -64,7 +64,7 @@ ui <- dashboardPage(
   dashboardSidebar(
     checkboxInput("opt_randomize", "Randomize before", FALSE),
     checkboxInput("opt_distribute", "Distribute unallocated", TRUE),
-    checkboxInput("opt_favor_student", "Favor student prefs", FALSE),
+    #checkboxInput("opt_favor_student", "Favor student prefs", FALSE),
     numericInput("opt_max_time", "Time limit (s)", 15, min = 1, max = 60, step = 1),
     numericInput("opt_max_iters", "Iteration limit", 0, min = 0, step = 25)
   ),
@@ -72,22 +72,22 @@ ui <- dashboardPage(
   dashboardBody(
     useShinyjs(),
     tabBox( width = 12,
-      tabPanel("Introduction", htmlOutput("intro")),
-      tabPanel("Lecturers",
+      tabPanel(HTML("Introduction &#9654;"), htmlOutput("intro")),
+      tabPanel(HTML("Lecturers &#9654;"),
                fileInput("lect_file", "Choose lecturers file",
                          multiple = FALSE,
                          accept = "text/plain"),
                verbatimTextOutput("lect_check"),
                htmlOutput("lecturer_help"),
       ),
-      tabPanel("Projects",
+      tabPanel(HTML("Projects &#9654;"),
                fileInput("proj_file", "Choose projects file",
                          multiple = FALSE,
                          accept = "text/plain"),
                verbatimTextOutput("proj_check"),
                htmlOutput("projects_help"),
       ),
-      tabPanel("Students",
+      tabPanel(HTML("Students &#9654;"),
                fileInput("stud_file", "Choose students file",
                          multiple = FALSE,
                          accept = "text/plain"),
@@ -96,10 +96,11 @@ ui <- dashboardPage(
       ),
       tabPanel("Allocation", 
                htmlOutput("algo_output"),
+               p(),
                hidden(
                  div(
                    id = "download_all_div",
-                   downloadLink('download_output', 'Download allocation output')
+                   downloadLink('download_output', HTML('&#11088;Download allocation output&#10549;'))
                  )
                ),
                hr(),
@@ -110,7 +111,7 @@ ui <- dashboardPage(
                  )
                )
       ),
-      tabPanel("Options help", htmlOutput("options_help"))
+      tabPanel(HTML("Options help"), htmlOutput("options_help"))
     )
   )
 )
@@ -272,7 +273,7 @@ server <- function(input, output, session) {
           vals$proj_list,
           randomize = input$opt_randomize,
           distribute_unallocated = input$opt_distribute,
-          favor_student_prefs = input$opt_favor_student,
+          favor_student_prefs = FALSE,
           time_limit = input$opt_max_time,
           iteration_limit = ifelse(input$opt_max_iters < 1,
                                    Inf,
@@ -281,25 +282,33 @@ server <- function(input, output, session) {
         })
       },
       error = function(e) {
-        #vals$algo_ready = FALSE
         vals$log = NULL
         shinyjs::hide("download_all_div")
         # return a safeError if a parsing error occurs
         stop(safeError(e))
       }
     )
+    
     vals$output_file = create_output_file( algo_output )
     shinyjs::show("download_all_div")
     vals$log = algo_messages
     
-    paste0("Performed ", algo_output$iterations,
+    summary_string = paste0("Performed ", algo_output$iterations,
           " iterations in ", round(algo_output$time, 3), " seconds. ",
-          " There are ", length(algo_output$unallocated_students), " unallocated students. ",
-          length(algo_output$unallocated_after_spa), 
-          " students (",
-          round(100 * length(algo_output$unallocated_after_spa) / length(vals$stud_list))
-          ,"%) ",
-          " were assigned random projects.")
+          " There are ", length(algo_output$unallocated_students), " unallocated students. ")
+    
+    if(input$opt_distribute){
+      summary_string = paste0(
+        summary_string,
+        length(algo_output$unallocated_after_spa), 
+        " students (",
+        round(100 * length(algo_output$unallocated_after_spa) / length(vals$stud_list))
+        ,"%) ",
+        " were assigned random projects."
+      )
+    }
+    
+    return(summary_string)
     
   })
 

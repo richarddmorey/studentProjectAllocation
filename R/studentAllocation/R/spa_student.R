@@ -47,7 +47,16 @@ spa_student <- function( student_list, lecturer_list, project_list,
     if( length( e$unallocated_students ) == 0 ) 
       done <- TRUE
     
-    if( done | iterations_done >= iteration_limit | time_since_start > time_limit ) break
+    if( done ) 
+      break
+    
+    if( iterations_done > iteration_limit )
+      stop("Iteration limit of ", iteration_limit ," exceeded.")
+      
+    if( time_since_start > time_limit )
+      stop("Time limit of ", time_limit ," exceeded.")
+    
+    
     
     ## find an student with a project left in their list
     for( student in e$unallocated_students ){

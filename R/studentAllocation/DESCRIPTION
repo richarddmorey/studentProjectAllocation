@@ -12,5 +12,7 @@ Imports:
     settings,
     shiny,
     rio,
-    shinyjs
+    shinyjs,
+    zip,
+    shinydashboard
 RoxygenNote: 7.0.2
