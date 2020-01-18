@@ -17,6 +17,10 @@ devtools::install_github('richarddmorey/studentProjectAllocation',
                          subdir = "R/studentAllocation")
 ```
 
+### Using the shiny app
+
+
+
 ### Read in the input files
 
 Use the functions `read_lecturer_file`, `read_project_file`, and `read_student_file` to read in the respective data files. See [fileFormatDetails.txt](https://github.com/richarddmorey/studentProjectAllocation/blob/master/fileFormatDetails.txt) for more information. For instance, you can read in the example data files that come with the package:
@@ -72,27 +76,12 @@ For now, this is just quick and dirty; in the future the output will be easier t
 
 ### Cleaner output
 
+The functions `studentAllocation::neat_project_output()`, `studentAllocation::neat_student_output()`, and `studentAllocation::neat_lecturer_output()` will provide you with neater information when passed the output object. For instance:
+
 Until neater output is available, you can produce nicer output yourself. For instance, you might want to create a `tibble` containing the student assignments and their ranking of that assignment. You can do it like this:
 
 ```
-## Compute the rankings by matching the output against the student preference list
-rankings <- sapply(names(e$student_assignments), function( student ){
-  p <- e$student_assignments[[ student ]]
-  match( p, stud_list[[ student ]],  nomatch =  NA )
-})
-
-## Which lecturer offers which project?
-proj_lects <- sapply( proj_list, function(p){
-  p[["lecturer"]]
-})
-
-library(dplyr)
-
-tibble(student = names(e$student_assignments), 
-       project = unlist(e$student_assignments),
-       lecturer = proj_lects [ project ],
-       rankings = rankings) %>%
-  arrange(project) -> student_assignments
+student_assignments = studentAllocation::neat_student_output(e)
 ```
 
 The output in `student_assignments` will look something like this:
@@ -119,6 +108,7 @@ student_assignments
 We can also check the distribution of rankings to see how good the allocation was:
 
 ```
+library(dplyr)
 student_assignments %>%
   group_by( rankings ) %>%
   summarise(frequency = n() ) %>%
@@ -148,7 +138,7 @@ You can set various options using the `studentAllocation::pkg_options` function,
 | `iteration_limit`         | integer  | `Inf`   | Limit on the number of iterations for the algorithm (Inf for no limit)  |
 | `time_limit`              | numeric  | `60`    | Limit (in seconds) on the time the algorithm runs                       |
 | `distribute_unallocated`  | logical  | `TRUE`  | Randomly distribute the unallocated students after the algorithm runs?  |
-| `favor_student_prefs`     | logical  | `FALSE` | Favor student preferences over lecturer preferences when ordering students? For Abraham et al's (2007) spa-student algorithm this should be `FALSE`.                                                               |
+| `favor_student_prefs`     | logical  | `FALSE` | Experimental. Favor student preferences over lecturer preferences when ordering students? For Abraham et al's (2007) spa-student algorithm this should be `FALSE`. Do not set this to `TRUE` if you want the algorithm to finish.                                                         |
 | `print_log`               | logical  | `FALSE` | Print log messages?                                                     |
 
 For instance, you can turn on logging by running `studentAllocation::pkg_options( print_log = TRUE )` before `spa_student`.
