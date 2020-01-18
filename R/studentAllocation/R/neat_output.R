@@ -64,7 +64,7 @@ neat_project_output <- function( allocation_output ){
 #'
 #' @return
 #' @export
-#' @importFrom dplyr mutate tibble `%>%`
+#' @importFrom dplyr mutate tibble `%>%` arrange
 #'
 #' @examples
 neat_student_output <- function( allocation_output ){
