@@ -69,6 +69,8 @@ neat_project_output <- function( allocation_output ){
 #' @examples
 neat_student_output <- function( allocation_output ){
   
+  stud_list = allocation_output$student_list
+  
   rankings <- sapply(names(allocation_output$student_assignments), function( student ){
     p <- allocation_output$student_assignments[[ student ]]
     match( p, stud_list[[ student ]],  nomatch =  NA )
