@@ -61,7 +61,12 @@ create_output_file <- function(allocation_output){
 
 # Define UI for data upload app ----
 ui <- dashboardPage(
-  dashboardHeader(title = "Project allocation"),
+  dashboardHeader(title = "Project allocation",
+                  tags$li(a(href = 'https://github.com/richarddmorey/studentProjectAllocation',
+                            target = "_blank",
+                            icon("github"),
+                            title = "GitHub repository for this app"),
+                          class = "dropdown")),
 
   # Sidebar layout with input and output definitions ----
   dashboardSidebar(
