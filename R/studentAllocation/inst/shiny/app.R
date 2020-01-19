@@ -41,7 +41,7 @@ create_output_file <- function(allocation_output){
 
   if(length(allocation_output$unallocated_students)){
     unallocated_students_fn = file.path(save_dir, "unallocated_students.txt")
-    cat(file = unallocated_students_fn,
+    cat(file = unallocated_students_fn, sep = "\n",
         allocation_output$unallocated_students
     )
   }
