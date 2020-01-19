@@ -1,12 +1,12 @@
 library(shiny)
 library(shinydashboard)
 library(shinyjs)
+library(shinycssloaders)
 
 vals <- reactiveValues(lect_list = NULL,
                        proj_list = NULL,
                        stud_list = NULL,
-                       total_lect_cap = NULL,
-                       total_proj_cap = NULL,
+                       total_effective_cap = NULL,
                        total_students = NULL,
                        algo_ready = FALSE,
                        log = NULL, 
@@ -86,7 +86,6 @@ ui <- dashboardPage(
   dashboardSidebar(
     checkboxInput("opt_randomize", "Randomize before", FALSE),
     checkboxInput("opt_distribute", "Distribute unallocated", TRUE),
-    #checkboxInput("opt_favor_student", "Favor student prefs", FALSE),
     numericInput("opt_max_time", "Time limit (s)", 15, min = 1, max = 60, step = 1),
     numericInput("opt_max_iters", "Iteration limit", 0, min = 0, step = 25)
   ),
@@ -117,7 +116,7 @@ ui <- dashboardPage(
                htmlOutput("students_help"),
       ),
       tabPanel("Allocation", 
-               htmlOutput("algo_output"),
+               withSpinner(htmlOutput("algo_output")),
                p(),
                hidden(
                  div(
@@ -212,9 +211,7 @@ server <- function(input, output, session) {
     )
     
     vals$lect_list = lect_list
-    vals$total_lect_cap = sum(sapply(lect_list, function(el) el$cap))
-    
-    
+
     if( is.list(vals$lect_list) &
         is.list(vals$proj_list) &
         is.list(vals$stud_list)
@@ -242,8 +239,6 @@ server <- function(input, output, session) {
     )
     
     vals$proj_list = proj_list
-    vals$total_proj_cap = sum(sapply(proj_list, function(el) el$cap))
-    
     
     if( is.list(vals$lect_list) &
         is.list(vals$proj_list) &
@@ -287,6 +282,7 @@ server <- function(input, output, session) {
   output$algo_output <- renderUI({
     
     req(vals$algo_ready)
+    #validate(need(vals$algo_ready, "Upload the required files under the tabs to the left."))
     studentAllocation::pkg_options(print_log = TRUE)
     
     tryCatch(
@@ -316,6 +312,8 @@ server <- function(input, output, session) {
       }
     )
     
+    vals$total_effective_cap = sum(studentAllocation::effective_capacity(vals$lect_list, vals$proj_list))
+
     vals$output_file = create_output_file( algo_output,
                                            input$lect_file,
                                            input$proj_file,
@@ -339,23 +337,16 @@ server <- function(input, output, session) {
       )
     }
     
-    if(vals$total_lect_cap < vals$total_students){
+    if(vals$total_effective_cap < vals$total_students){
       summary_string = paste0(
         summary_string,
         "<p> &#128308; There were ", vals$total_students, 
-        " total students but the total capacity of lecturers was only ",
-        vals$total_lect_cap, " spaces. "
+        " total students but the total effective capacity of lecturers ",
+        "(taking into account capacity of projects as well) was only ",
+        vals$total_effective_cap, " spaces. "
       )
     }
-    if(vals$total_proj_cap < vals$total_students){
-      summary_string = paste0(
-        summary_string,
-        "<p> &#128308; There were ", vals$total_students,
-        " total students but the total capacity of projects was only ",
-        vals$total_proj_cap, " spaces. "
-      )
-    }
-    
+
     return(HTML(summary_string))
     
   })

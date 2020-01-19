@@ -14,7 +14,7 @@ Imports:
     rio,
     shinyjs,
     zip,
-    shinydashboard
+    shinydashboard,
+    shinycssloaders
 RoxygenNote: 7.0.2
 Encoding: UTF-8
-

@@ -69,7 +69,7 @@ spa_student <- function( student_list, lecturer_list, project_list,
       stop("Iteration limit of ", iteration_limit ," exceeded.")
       
     if( time_since_start > time_limit )
-      stop("Time limit of ", time_limit ," exceeded.")
+      stop("Time limit of ", time_limit ," seconds exceeded.")
     
     
     
@@ -146,10 +146,11 @@ spa_student <- function( student_list, lecturer_list, project_list,
       if( is.null(project) ) break # No free projects
       
       lecturer <- e$project_list[[ project ]][[ "lecturer" ]]
+      project_cap <- e$project_list[[ project ]][[ "cap" ]]
+      lecturer_cap <- e$lecturer_list[[ lecturer ]][[ "cap" ]]
       
       assign_student( student, project, lecturer, e)
       allocate_log(iterations_done," Assigned ", student," to project ", project, " of ", lecturer,".")
-      
       
       ## check to see if project is full
       if( length( e$project_assignments[[ project ]] ) == project_cap ){

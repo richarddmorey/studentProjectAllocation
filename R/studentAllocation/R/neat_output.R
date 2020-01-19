@@ -16,6 +16,7 @@ neat_lecturer_output <- function( allocation_output ){
       students = allocation_output$lecturer_assignments[[lect]]
       dplyr::tibble(
         lecturer = lect,
+        cap = allocation_output$lecturer_list[[lect]]$cap,
         n_students = length(students),
         student_list = paste(students, collapse = ","),
         at_capacity = lect %in% allocation_output$full_lecturers
@@ -46,6 +47,7 @@ neat_project_output <- function( allocation_output ){
       tibble(
         project = proj,
         lecturer = allocation_output$project_list[[proj]]$lecturer,
+        cap = allocation_output$project_list[[proj]]$cap,
         n_students = length(students),
         student_list = paste(students, collapse = ","),
         at_capacity = proj %in% allocation_output$full_projects
