@@ -11,7 +11,7 @@
 #' @examples
 effective_capacity <- function(lecturer_list, project_list){
   lect_cap = sapply(lecturer_list, function(el) el$cap)
-  proj_lect_cap <- lect_capacity * 0
+  proj_lect_cap <- lect_cap * 0
   for(i in 1:length(project_list)){
     proj_lect_cap[project_list[[i]]$lecturer] = 
       proj_lect_cap[project_list[[i]]$lecturer] + 
