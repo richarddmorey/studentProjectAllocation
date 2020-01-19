@@ -12,15 +12,18 @@ vals <- reactiveValues(lect_list = NULL,
                        log = NULL, 
                        output_file = NULL)
 
-create_output_file <- function(allocation_output){
+create_output_file <- function(allocation_output, lect_file, proj_file, stud_file){
   
   # set up output directory
   td = tempdir(check = TRUE)
   save_dir = tempfile(pattern = "allocation_", tmpdir = td)
   if(dir.exists(save_dir))
     unlink(save_dir, recursive = TRUE)
-  dir.create(save_dir)
-
+  dir.create(
+    file.path(save_dir, "original_files"),
+    recursive = TRUE
+    )
+  
   lecturer_allocation_fn = file.path(save_dir, "lecturer_allocation.csv")
   rio::export(
     x = studentAllocation::neat_lecturer_output(allocation_output),
@@ -45,6 +48,17 @@ create_output_file <- function(allocation_output){
         allocation_output$unallocated_students
     )
   }
+  
+  ## Copy original files over
+  original_file_paths = c( lect_file$datapath, 
+                           proj_file$datapath,
+                           stud_file$datapath )
+  file.copy(original_file_paths, 
+            file.path(save_dir, "original_files", 
+                      c(lect_file$name,
+                        proj_file$name,
+                        stud_file$name))
+            )
   
   # zip up contents
   zip_file = tempfile(tmpdir = td, pattern = "allocation_", fileext = ".zip")
@@ -302,7 +316,11 @@ server <- function(input, output, session) {
       }
     )
     
-    vals$output_file = create_output_file( algo_output )
+    vals$output_file = create_output_file( algo_output,
+                                           input$lect_file,
+                                           input$proj_file,
+                                           input$stud_file )
+                                  
     shinyjs::show("download_all_div")
     vals$log = algo_messages
     
