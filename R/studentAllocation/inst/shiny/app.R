@@ -5,6 +5,9 @@ library(shinyjs)
 vals <- reactiveValues(lect_list = NULL,
                        proj_list = NULL,
                        stud_list = NULL,
+                       total_lect_cap = NULL,
+                       total_proj_cap = NULL,
+                       total_students = NULL,
                        algo_ready = FALSE,
                        log = NULL, 
                        output_file = NULL)
@@ -189,7 +192,9 @@ server <- function(input, output, session) {
       }
     )
     
-    vals$lect_list = lect_list  
+    vals$lect_list = lect_list
+    vals$total_lect_cap = sum(sapply(lect_list, function(el) el$cap))
+    
     
     if( is.list(vals$lect_list) &
         is.list(vals$proj_list) &
@@ -217,7 +222,9 @@ server <- function(input, output, session) {
       }
     )
     
-    vals$proj_list = proj_list  
+    vals$proj_list = proj_list
+    vals$total_proj_cap = sum(sapply(proj_list, function(el) el$cap))
+    
     
     if( is.list(vals$lect_list) &
         is.list(vals$proj_list) &
@@ -246,6 +253,7 @@ server <- function(input, output, session) {
     )
     
     vals$stud_list = stud_list  
+    vals$total_students = length(stud_list)
     
     if( is.list(vals$lect_list) &
         is.list(vals$proj_list) &
@@ -293,7 +301,7 @@ server <- function(input, output, session) {
     shinyjs::show("download_all_div")
     vals$log = algo_messages
     
-    summary_string = paste0("Performed ", algo_output$iterations,
+    summary_string = paste0("<p> Performed ", algo_output$iterations,
           " iterations in ", round(algo_output$time, 3), " seconds. ",
           " There are ", length(algo_output$unallocated_students), " unallocated students. ")
     
@@ -308,7 +316,24 @@ server <- function(input, output, session) {
       )
     }
     
-    return(summary_string)
+    if(vals$total_lect_cap < vals$total_students){
+      summary_string = paste0(
+        summary_string,
+        "<p> &#128308; There were ", vals$total_students, 
+        " total students but the total capacity of lecturers was only ",
+        vals$total_lect_cap, " spaces. "
+      )
+    }
+    if(vals$total_proj_cap < vals$total_students){
+      summary_string = paste0(
+        summary_string,
+        "<p> &#128308; There were ", vals$total_students,
+        " total students but the total capacity of projects was only ",
+        vals$total_proj_cap, " spaces. "
+      )
+    }
+    
+    return(HTML(summary_string))
     
   })
 
