@@ -148,7 +148,7 @@ server <- function(input, output, session) {
     if(vals$algo_ready){
       return(HTML("&#128994; Allocation"))
     }else{
-      return(HTML("&#10060 ;Allocation"))
+      return(HTML("&#10060; Allocation"))
     }
   })
   
