@@ -168,6 +168,11 @@ spa_student <- function( student_list, lecturer_list, project_list,
     }
   }
   
+  e$student_list <- student_list
+  e$lecturer_list <- lecturer_list
+  e$project_list <- project_list
+  e$lecturer_projects <- lecturer_projects( project_list )
+  
   e$iterations = iterations_done
   e$time = Sys.time() - start_time
   e$unallocated_after_spa <- unallocated_after_spa
