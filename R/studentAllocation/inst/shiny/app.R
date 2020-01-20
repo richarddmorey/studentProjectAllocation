@@ -121,7 +121,7 @@ ui <- dashboardPage(
                hidden(
                  div(
                    id = "download_all_div",
-                   downloadLink('download_output', HTML('&#11088;Download allocation output&#10549;')),
+                   downloadLink('download_output', HTML('&#11088; Download allocation output&#10549;')),
                    br(), br(),
                    actionButton("rerun_allocation", HTML("&#10227; Re-run allocation")),
                    hr(),
@@ -146,33 +146,33 @@ server <- function(input, output, session) {
   
   output$allocation_tab_label <- renderUI({
     if(vals$algo_ready){
-      return(HTML("&#128994;Allocation"))
+      return(HTML("&#128994; Allocation"))
     }else{
-      return(HTML("&#10060;Allocation"))
+      return(HTML("&#10060 ;Allocation"))
     }
   })
   
   output$lecturers_tab_label <- renderUI({
     if(is.list(vals$lect_list)){
-      return(HTML("&#9989;Lecturers &#9654;"))
+      return(HTML("&#9989; Lecturers &#9654;"))
     }else{
-      return(HTML("&#8193;Lecturers &#8193;"))
+      return(HTML("&#8193; Lecturers &#8193;"))
     }
   })
   
   output$projects_tab_label <- renderUI({
     if(is.list(vals$proj_list)){
-      return(HTML("&#9989;Projects &#9654;"))
+      return(HTML("&#9989; Projects &#9654;"))
     }else{
-      return(HTML("&#8193;Projects &#8193;"))
+      return(HTML("&#8193; Projects &#8193;"))
     }
   })
   
   output$students_tab_label <- renderUI({
     if(is.list(vals$stud_list)){
-      return(HTML("&#9989;Students &#9654;"))
+      return(HTML("&#9989; Students &#9654;"))
     }else{
-      return(HTML("&#8193;Students &#8193;"))
+      return(HTML("&#8193; Students &#8193;"))
     }
   })
   
