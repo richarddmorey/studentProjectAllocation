@@ -94,45 +94,47 @@ ui <- dashboardPage(
     useShinyjs(),
     tabBox( width = 12,
       tabPanel(HTML("Introduction &#9654;"), htmlOutput("intro")),
-      tabPanel(HTML("Lecturers &#9654;"),
+      tabPanel(uiOutput("lecturers_tab_label"),
                fileInput("lect_file", "Choose lecturers file",
                          multiple = FALSE,
                          accept = "text/plain"),
                verbatimTextOutput("lect_check"),
                htmlOutput("lecturer_help"),
       ),
-      tabPanel(HTML("Projects &#9654;"),
+      tabPanel(uiOutput("projects_tab_label"),
                fileInput("proj_file", "Choose projects file",
                          multiple = FALSE,
                          accept = "text/plain"),
                verbatimTextOutput("proj_check"),
                htmlOutput("projects_help"),
       ),
-      tabPanel(HTML("Students &#9654;"),
+      tabPanel(uiOutput("students_tab_label"),
                fileInput("stud_file", "Choose students file",
                          multiple = FALSE,
                          accept = "text/plain"),
                verbatimTextOutput("stud_check"),
                htmlOutput("students_help"),
       ),
-      tabPanel("Allocation", 
+      tabPanel(uiOutput("allocation_tab_label"), 
                withSpinner(htmlOutput("algo_output")),
                p(),
                hidden(
                  div(
                    id = "download_all_div",
-                   downloadLink('download_output', HTML('&#11088;Download allocation output&#10549;'))
-                 )
+                   downloadLink('download_output', HTML('&#11088;Download allocation output&#10549;')),
+                   br(), br(),
+                   actionButton("rerun_allocation", HTML("&#10227; Re-run allocation")),
+                   hr(),
+                   actionButton("toggle_log", "Show/hide log"),
+                   hidden(
+                     div( id = "log_div",
+                          verbatimTextOutput("log_text")
+                     )
+                   )
+                   )
                ),
-               hr(),
-               actionButton("toggle_log", "Show/hide log"),
-               hidden(
-                 div( id = "log_div",
-                      verbatimTextOutput("log_text")
-                 )
-               )
       ),
-      tabPanel(HTML("Options help"), htmlOutput("options_help"))
+      tabPanel(HTML("&#9432; Options help"), htmlOutput("options_help"))
     )
   )
 )
@@ -141,6 +143,38 @@ ui <- dashboardPage(
 server <- function(input, output, session) {
   
   addClass(selector = "body", class = "sidebar-collapse")
+  
+  output$allocation_tab_label <- renderUI({
+    if(vals$algo_ready){
+      return(HTML("&#128994;Allocation"))
+    }else{
+      return(HTML("&#10060;Allocation"))
+    }
+  })
+  
+  output$lecturers_tab_label <- renderUI({
+    if(is.list(vals$lect_list)){
+      return(HTML("&#9989;Lecturers &#9654;"))
+    }else{
+      return(HTML("&#8193;Lecturers &#8193;"))
+    }
+  })
+  
+  output$projects_tab_label <- renderUI({
+    if(is.list(vals$proj_list)){
+      return(HTML("&#9989;Projects &#9654;"))
+    }else{
+      return(HTML("&#8193;Projects &#8193;"))
+    }
+  })
+  
+  output$students_tab_label <- renderUI({
+    if(is.list(vals$stud_list)){
+      return(HTML("&#9989;Students &#9654;"))
+    }else{
+      return(HTML("&#8193;Students &#8193;"))
+    }
+  })
   
   observeEvent(input$toggle_log,{
     shinyjs::toggle("log_div")
@@ -205,6 +239,7 @@ server <- function(input, output, session) {
       error = function(e) {
         vals$algo_ready = FALSE
         vals$log = NULL
+        vals$lect_list = NULL
         # return a safeError if a parsing error occurs
         stop(safeError(e))
       }
@@ -233,6 +268,7 @@ server <- function(input, output, session) {
       error = function(e) {
         vals$algo_ready = FALSE
         vals$log = NULL
+        vals$proj_list = NULL
         # return a safeError if a parsing error occurs
         stop(safeError(e))
       }
@@ -261,6 +297,7 @@ server <- function(input, output, session) {
       error = function(e) {
         vals$algo_ready = FALSE
         vals$log = NULL
+        vals$stud_list = NULL
         # return a safeError if a parsing error occurs
         stop(safeError(e))
       }
@@ -281,9 +318,13 @@ server <- function(input, output, session) {
   
   output$algo_output <- renderUI({
     
-    req(vals$algo_ready)
-    #validate(need(vals$algo_ready, "Upload the required files under the tabs to the left."))
+    validate(need(vals$algo_ready, "Upload the required files under the tabs to the left."))
     studentAllocation::pkg_options(print_log = TRUE)
+    
+    shinyjs::hide("download_all_div")
+    
+    # Add dependency on re-run button
+    input$rerun_allocation
     
     tryCatch(
       {
@@ -306,12 +347,12 @@ server <- function(input, output, session) {
       },
       error = function(e) {
         vals$log = NULL
-        shinyjs::hide("download_all_div")
         # return a safeError if a parsing error occurs
         stop(safeError(e))
       }
     )
     
+    vals$algo_done = TRUE
     vals$total_effective_cap = sum(studentAllocation::effective_capacity(vals$lect_list, vals$proj_list))
 
     vals$output_file = create_output_file( algo_output,

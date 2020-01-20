@@ -34,7 +34,7 @@ check_project_student_consistency <- function( project_list, student_list ){
   all_projects_in_student_list <- unlist( student_list )
   not_in_project_list <- dplyr::setdiff(all_projects_in_student_list, all_projects_in_project_list)
   if( length(not_in_project_list) )
-    stop("Projects ", not_in_project_list, " are in student preferences but not in project list.")
+    stop("Projects ", paste(not_in_project_list, collapse = ", "), " are in student preferences but not in project list.")
 
   TRUE
 }
@@ -58,7 +58,7 @@ check_lecturer_project_consistency <- function( lecturer_list, project_list ){
   )
   not_in_lecturer_list <- dplyr::setdiff(all_lecturers_in_project_list, all_lecturers_in_lecturer_list)
   if( length(not_in_lecturer_list) )
-    stop("Lecturers ", not_in_lecturer_list, " are in project list but not in lecturer list.")
+    stop("Lecturers ", paste(not_in_lecturer_list,collapse=", "), " are in project list but not in lecturer list.")
 
   TRUE
 }
@@ -84,7 +84,7 @@ check_student_lecturer_consistency <- function( student_list, lecturer_list ){
   )
   not_in_student_list <- dplyr::setdiff(all_students_in_lecturer_list, all_students_in_student_list)
   if( length(not_in_student_list) )
-    stop("Students ", not_in_student_list, " are in lecturer list but not in student list.")
+    stop("Students ", paste(not_in_student_list, collapse = ", "), " are in lecturer list but not in student list.")
   
   TRUE  
 }
