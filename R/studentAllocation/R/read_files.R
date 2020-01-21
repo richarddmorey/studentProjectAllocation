@@ -18,7 +18,7 @@ read_student_file <- function( filename ){
   stopifnot( file.exists( filename ) )
   
   file_content <- readLines( con = filename )
-  split_content <- strsplit( x = file_content, split = "[ \\t]+" )
+  split_content <- strsplit( x = trimws(file_content), split = "[ \\t]+" )
 
   student_list <- list()
   
@@ -50,7 +50,7 @@ read_lecturer_file <- function( filename ){
   stopifnot( file.exists( filename ) )
   
   file_content <- readLines( con = filename )
-  split_content <- strsplit( x = file_content, split = "[ \\t]+" )
+  split_content <- strsplit( x = trimws(file_content), split = "[ \\t]+" )
   
   lecturer_list <- list()
   
@@ -93,7 +93,7 @@ read_project_file <- function( filename ){
   stopifnot( file.exists( filename ) )
   
   file_content <- readLines( con = filename )
-  split_content <- strsplit( x = file_content, split = "[ \\t]+" )
+  split_content <- strsplit( x = trimws(file_content), split = "[ \\t]+" )
   
   project_list <- list()
   
