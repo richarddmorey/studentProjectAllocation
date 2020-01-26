@@ -26,11 +26,18 @@ Each row of the lecturers file indicates the preferences of a particular lecture
 Each row should define a unique lecturer (no duplicate IDs across rows) and all student IDs given in the preference lists should correspond to a row of the students file. Note that a lecturer does not have to have a preference list, nor do they need to rank every student.
 
 
+
+<h4>Unequal numbers of columns</h4>
+
 <p>
 
-Because the length of the list of students might differ between lecturers, the number of columns per row in this file will be variable, but will be at least two.
+Because the length of the list of students might differ between lecturers, the number of columns per row in this file will be variable, but will be at least two. 
 
-<h4>Example rows</h4>
+<p>
+  
+Many programs require output to files with the same number of columns in each row; to get around this, simply make the final elements of shorter rows empty or spaces, and output a tab-delimited file. The extra elements will be stripped. 
+
+<h3>Example rows</h3>
 
 <pre>
 WILLIAMS 5 stu_1135 stu_4052 stu_3942<br/>
