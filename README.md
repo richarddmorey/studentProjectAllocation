@@ -103,7 +103,7 @@ The output in `student_assignments` will look something like this:
 student_assignments
 
 # # A tibble: 100 x 4
-#    student project lecturer rankings
+#    student project lecturer student_ranking
 #    <chr>   <chr>   <chr>       <int>
 #  1 s1      p1      l1              1
 #  2 s6      p1      l1              1
@@ -123,12 +123,12 @@ We can also check the distribution of rankings to see how good the allocation wa
 ```
 library(dplyr)
 student_assignments %>%
-  group_by( rankings ) %>%
+  group_by(  student_ranking ) %>%
   summarise(frequency = n() ) %>%
   mutate( percentage = 100 * frequency / sum(frequency) )
 
 # # A tibble: 6 x 3
-#   rankings frequency percentage
+#   student_ranking frequency percentage
 #      <int>     <int>      <dbl>
 # 1        1        78         78
 # 2        2         6          6
