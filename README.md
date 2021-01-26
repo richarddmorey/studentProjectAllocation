@@ -27,7 +27,7 @@ studentAllocation::shiny_spa_student()
 
 The interface looks something like this:
 
-![student project allocation shiny interface](https://drsmorey.org/my_images/student_allocation_shiny_large.png)
+![student project allocation shiny interface](https://github.com/richarddmorey/studentProjectAllocation/raw/master/media/student_allocation_shiny_large.png)
 
 
 Full instructions for using the shiny app are included in the interface. You may not even have to read any further than this.
