@@ -25,7 +25,8 @@ spa_student <- function( student_list, lecturer_list, project_list,
   e$lecturer_list <- lecturer_list
   e$project_list <- project_list
   e$lecturer_projects <- lecturer_projects( project_list )
-
+  e$msgs <- NULL
+  
   stopifnot(
     check_input_lists( e$student_list, e$lecturer_list, e$project_list )
   )
@@ -65,13 +66,18 @@ spa_student <- function( student_list, lecturer_list, project_list,
     if( done ) 
       break
     
-    if( iterations_done > iteration_limit )
-      stop("Iteration limit of ", iteration_limit ," exceeded.")
-      
-    if( time_since_start > time_limit )
-      stop("Time limit of ", time_limit ," seconds exceeded.")
-    
-    
+    if( iterations_done > iteration_limit ) {
+      msg<- paste0("Iteration limit of ", iteration_limit ," exceeded. The algorithm did not finish!")
+      warning(msg)
+      e$msgs <- c(e$msgs,msg)
+      break
+    }
+    if( time_since_start > time_limit ) {
+      msg<-paste0("Time limit of ", time_limit ," seconds exceeded. The algorithm did not finish!")
+      warning(msg)
+      e$msgs <- c(e$msgs,msg)
+      break
+    }
     
     ## find an student with a project left in their list
     for( student in e$unallocated_students ){
@@ -164,7 +170,6 @@ spa_student <- function( student_list, lecturer_list, project_list,
         allocate_log("Lecturer ", lecturer, " is now at capacity.")
       }
       
-      
     }
   }
   
@@ -176,8 +181,16 @@ spa_student <- function( student_list, lecturer_list, project_list,
   e$iterations = iterations_done
   e$time = Sys.time() - start_time
   e$unallocated_after_spa <- unallocated_after_spa
+  
+  #Print important messages at end.
+  if (length(e$msgs)>0) {
+    cat("IMPORTANT:",e$msgs)  #If using RStudio, prints in a different color than the log prints, so it stands out.
+
+    #Also add the important messages to the log
+    for (i in 1:length(e$msgs)) {
+      allocate_log("IMPORTANT:",e$msgs)
+    }
+  }
   return( e )
   
 }
-
-
