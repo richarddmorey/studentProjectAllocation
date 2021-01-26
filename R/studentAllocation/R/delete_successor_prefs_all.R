@@ -4,7 +4,7 @@
 
 delete_successor_prefs_all <- function( student, lecturer, env ){
   
-  students <- env$lecture_list[[ lecturer ]][[ "students" ]]
+  students <- env$lecturer_list[[ lecturer ]][[ "students" ]]
   n_students <- length( students )
   
   idx <- which( students == student )
