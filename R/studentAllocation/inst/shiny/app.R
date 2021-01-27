@@ -12,7 +12,7 @@ vals <- reactiveValues(lect_list = NULL,
                        log = NULL, 
                        output_file = NULL)
 
-create_output_file <- function(allocation_output, lect_file, proj_file, stud_file){
+create_output_file <- function(allocation_output, lect_file, proj_file, stud_file, delim){
   
   # set up output directory
   td = tempdir(check = TRUE)
@@ -26,13 +26,13 @@ create_output_file <- function(allocation_output, lect_file, proj_file, stud_fil
   
   lecturer_allocation_fn = file.path(save_dir, "lecturer_allocation.csv")
   rio::export(
-    x = studentAllocation::neat_lecturer_output(allocation_output),
+    x = studentAllocation::neat_lecturer_output(allocation_output, delim = delim),
     file = lecturer_allocation_fn
   )
 
   project_allocation_fn = file.path(save_dir, "project_allocation.csv")
   rio::export(
-    x = studentAllocation::neat_project_output(allocation_output),
+    x = studentAllocation::neat_project_output(allocation_output, delim = delim),
     file = project_allocation_fn
   )
 
@@ -86,6 +86,7 @@ ui <- dashboardPage(
   dashboardSidebar(
     checkboxInput("opt_randomize", "Randomize before", FALSE),
     checkboxInput("opt_distribute", "Distribute unallocated", TRUE),
+    textInput("neat_delim", "Output delimiter", studentAllocation::pkg_options()$neat_delim, width = "5em" ),
     numericInput("opt_max_time", "Time limit (s)", 15, min = 1, max = 60, step = 1),
     numericInput("opt_max_iters", "Iteration limit", 0, min = 0, step = 25)
   ),
@@ -355,10 +356,13 @@ server <- function(input, output, session) {
     vals$algo_done = TRUE
     vals$total_effective_cap = sum(studentAllocation::effective_capacity(vals$lect_list, vals$proj_list))
 
-    vals$output_file = create_output_file( algo_output,
-                                           input$lect_file,
-                                           input$proj_file,
-                                           input$stud_file )
+    vals$output_file = create_output_file( 
+      allocation_output = algo_output,
+      lect_file = input$lect_file,
+      proj_file = input$proj_file,
+      stud_file = input$stud_file,
+      delim = input$neat_delim
+    )
                                   
     shinyjs::show("download_all_div")
     vals$log = algo_messages
