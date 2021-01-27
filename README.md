@@ -153,6 +153,7 @@ You can set various options using the `studentAllocation::pkg_options` function,
 | `distribute_unallocated`  | logical  | `TRUE`  | Randomly distribute the unallocated students after the algorithm runs?  |
 | `favor_student_prefs`     | logical  | `FALSE` | Experimental. Favor student preferences over lecturer preferences when ordering students? For Abraham et al's (2007) spa-student algorithm this should be `FALSE`. Do not set this to `TRUE` if you want the algorithm to finish.                                                         |
 | `print_log`               | logical  | `FALSE` | Print log messages?                                                     |
+| `neat_delim`              | logical  | `;` |  Character used to paste together multiple elements in a field in neat output     |
 
 For instance, you can turn on logging by running `studentAllocation::pkg_options( print_log = TRUE )` before `spa_student`.
 

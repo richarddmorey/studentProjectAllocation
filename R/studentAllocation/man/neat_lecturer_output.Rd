@@ -4,10 +4,12 @@
 \alias{neat_lecturer_output}
 \title{Create a neat (tibble) version of the lecturer allocation}
 \usage{
-neat_lecturer_output(allocation_output)
+neat_lecturer_output(allocation_output, delim = pkg_options()$neat_delim)
 }
 \arguments{
 \item{allocation_output}{Output object from the allocation algorithm}
+
+\item{delim}{Character used to paste together multiple elements in a field in neat output}
 }
 \value{
 

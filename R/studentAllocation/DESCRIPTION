@@ -1,8 +1,8 @@
 Package: studentAllocation
 Type: Package
 Title: Algorithms for Allocation of Students to Projects
-Version: 0.2
-Date: 2020-01-18
+Version: 0.2.1
+Date: 2021-01-27
 Author: Richard D. Morey
 Maintainer: Richard D. Morey <richarddmorey@gmail.com>
 Description: Implementation of Abraham, Irving, and Manlove's (2007) SPA-student algorithm
@@ -16,5 +16,5 @@ Imports:
     zip,
     shinydashboard,
     shinycssloaders
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Encoding: UTF-8

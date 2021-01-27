@@ -2,13 +2,14 @@
 #' Create a neat (tibble) version of the lecturer allocation
 #'
 #' @param allocation_output Output object from the allocation algorithm
+#' @param delim Character used to paste together multiple elements in a field in neat output
 #'
 #' @return
 #' @export
 #' @importFrom dplyr mutate tibble `%>%`
 #'
 #' @examples
-neat_lecturer_output <- function( allocation_output ){
+neat_lecturer_output <- function( allocation_output, delim = pkg_options()$neat_delim ){
   
   lapply(
     names(allocation_output$lecturer_assignments),
@@ -18,7 +19,7 @@ neat_lecturer_output <- function( allocation_output ){
         lecturer = lect,
         cap = allocation_output$lecturer_list[[lect]]$cap,
         n_students = length(students),
-        student_list = paste(students, collapse = ";"),
+        student_list = paste(students, collapse = delim),
         at_capacity = lect %in% allocation_output$full_lecturers
       )
     }) %>% do.call(args = ., what = rbind) %>%
@@ -32,13 +33,14 @@ neat_lecturer_output <- function( allocation_output ){
 #' Create a neat (tibble) version of the project allocation
 #'
 #' @param allocation_output Output object from the allocation algorithm
+#' @param delim Character used to paste together multiple elements in a field in neat output
 #'
 #' @return
 #' @export
 #' @importFrom dplyr mutate tibble `%>%` as_tibble
 #'
 #' @examples
-neat_project_output <- function( allocation_output ){
+neat_project_output <- function( allocation_output, delim = pkg_options()$neat_delim ){
   
   lapply(
     names(allocation_output$project_assignments),
@@ -49,7 +51,7 @@ neat_project_output <- function( allocation_output ){
         lecturer = allocation_output$project_list[[proj]]$lecturer,
         cap = allocation_output$project_list[[proj]]$cap,
         n_students = length(students),
-        student_list = paste(students, collapse = ";"),
+        student_list = paste(students, collapse = delim),
         at_capacity = proj %in% allocation_output$full_projects
       )
     }) %>% do.call(args = ., what = rbind) %>%
