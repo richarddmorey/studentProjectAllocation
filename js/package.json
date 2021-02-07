@@ -1,0 +1,28 @@
+{
+    "name": "studentallocation",
+    "version": "0.1.0",
+    "description": "An implementation of Abraham et al's (2007) algorithm for allocation of student projects.",
+    "main": "dist/app.js",
+    "scripts": {
+        "create": "npx tsc",
+        "start": "npx tsc && node dist/app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Richard D. Morey",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/lodash": "^4.14.168",
+        "@types/n-readlines": "^1.0.1",
+        "@types/underscore": "^1.10.24",
+        "@types/winston": "^2.4.4",
+        "lodash": "^4.17.20",
+        "readline": "^1.3.0",
+        "tslint": "^6.1.3",
+        "typescript": "^4.1.3"
+    },
+    "dependencies": {
+        "n-readlines": "^1.0.1",
+        "underscore": "^1.12.0",
+        "winston": "^3.3.3"
+    }
+}
