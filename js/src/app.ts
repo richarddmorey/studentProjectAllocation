@@ -102,6 +102,15 @@ function worstStudentForLecturer(l: string) {
   return prefList[maxIdx]
 }
 
+function deletePrefs(s: string, p: string) {
+  logger.log('info', `Deleting ${p} for student ${s}`)
+  const i0 = students[s].prefs.indexOf(p)
+  if (i0 !== -1) students[s].prefs.splice(i0, 1)
+
+  const i1 = projectsPP[p].prefs.indexOf(s)
+  if(i1 !== -1) projectsPP[p].prefs.splice(i1, 1)
+}
+
 function deleteSuccessorPrefs(s: string, p: string) {
   logger.log('info', `Deleting successors of project ${p} for student ${s}`)
   const prefList = projectsPP[p].prefs
@@ -112,10 +121,9 @@ function deleteSuccessorPrefs(s: string, p: string) {
   const idx = prefList.indexOf(s)
   if (idx === -1 || idx === n) return
 
-  for (let i = idx + 1; i < n; i++){
+  for (let i = n - 1; i > idx; i--){
     const successor = prefList[i]
-    const i0 = students[successor].prefs.indexOf(p)
-    if (i0 !== -1) students[successor].prefs.splice(i0, 1)
+    deletePrefs(successor, p)
   }
 }
 
@@ -129,15 +137,10 @@ function deleteSuccessorPrefsAll(s: string, l: string) {
   const idx = prefList.indexOf(s)
   if (idx === -1 || idx === n) return
 
-  for (let i = idx + 1; i < n; i++) {
-    for (const p of lecturers[l].projects) {
+  for (const p of lecturers[l].projects) {
+    for (let i = n - 1; i > idx; i--){
       const successor = prefList[i]
-
-      const i0 = projectsPP[p].prefs.indexOf(s)
-      if(i0 !== -1) projectsPP[p].prefs.splice(i0, 1)
-
-      const i1 = students[successor].prefs.indexOf(p)
-      if (i1 !== -1) students[successor].prefs.splice(i1, 1)
+      deletePrefs(successor, p)
     }
   }
 }
