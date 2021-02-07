@@ -13,8 +13,8 @@ const lodash_1 = require("lodash");
 const n_readlines_1 = __importDefault(require("n-readlines"));
 const winston_1 = __importDefault(require("winston"));
 const options = {
-    shuffleInit: false,
-    randomUnallocated: false,
+    shuffleInit: true,
+    randomUnallocated: true,
     iterationLimit: 10000,
     timeLimit: 60
 };
@@ -332,7 +332,10 @@ if (options.randomUnallocated) {
         }
     }
 }
+logger.log('info', `Done, with ${unallocated.length} students unallocated`);
+/*
 for (const p of Object.keys(projects)) {
-    const l = projects[p].lecturer;
-    console.log(`${p} ${projects[p].cap} ${l} ${lecturers[l].cap}: ${projectAssignments[p]}`);
+  const l = projects[p].lecturer
+  console.log(`${p} ${projects[p].cap} ${l} ${lecturers[l].cap}: ${projectAssignments[p]}`)
 }
+*/

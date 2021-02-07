@@ -353,7 +353,11 @@ if (options.randomUnallocated) {
   }
 }
 
+logger.log('info', `Done, with ${unallocated.length} students unallocated`)
+
+/*
 for (const p of Object.keys(projects)) {
   const l = projects[p].lecturer
   console.log(`${p} ${projects[p].cap} ${l} ${lecturers[l].cap}: ${projectAssignments[p]}`)
 }
+*/
