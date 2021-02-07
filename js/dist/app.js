@@ -1,9 +1,13 @@
 "use strict";
 /*********
+*  Code by Richard D. Morey,
+*  February 2021
 *
-* Code by Richard D. Morey,
-* February 2021
-*
+*  Based on the SPA-student algorithm of:
+*  Abraham, D.J., Irving, R.W. and Manlove, D.F. (2007)
+*  Two algorithms for the student-project allocation problem.
+*  Journal of Discrete Algorithms, 5(1), pp. 73-90.
+*  (doi:10.1016/j.jda.2006.03.006)
 *********/
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -123,7 +127,7 @@ function deleteSuccessorPrefs(s, p) {
 }
 function deleteSuccessorPrefsAll(s, l) {
     logger.log('info', `Deleting successors of student ${s} for lecturer ${l}`);
-    const prefList = lecturers[l].prefs;
+    const prefList = lecturersPP[l].prefs;
     const n = prefList.length;
     if (n === 0)
         return;
@@ -207,6 +211,16 @@ if (options.shuffleInit) {
 }
 logger.log('info', 'Creating projected preferences');
 const lecturersPP = lodash_1.cloneDeep(lecturers);
+/************
+*  lecturersPP is L_k in Abraham et al. Notice that we add the students
+*  that are not in the lecturer's ranking, because in practice we might
+*  not have the lecturer preferences before the ranking. Section 2.1,
+*  paragraph 2, L_k is called a "strict order" of the B_k values. If we
+*  don't have that, we create it assuming that the lecturers are
+*  indifferent to the order of students they did not rank. Due to the
+*  way the code below works, the students will be in the order determined
+*  by the student list.
+*************/
 for (const s of unallocated) {
     for (const p of students[s].prefs) {
         if (lecturersPP[projects[p].lecturer].prefs.indexOf(s) === -1) {
@@ -215,6 +229,7 @@ for (const s of unallocated) {
     }
 }
 logger.log('info', 'Created lecturers projected preferences');
+// projectsPP is L_k^j in Abraham et al.
 const projectsPP = {};
 for (const p of Object.keys(projects)) {
     projectsPP[p] = { 'prefs': [] };
