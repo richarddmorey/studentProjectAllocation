@@ -9,10 +9,10 @@
 *  (doi:10.1016/j.jda.2006.03.006)
 *********/
 
-import { cloneDeep, shuffle } from 'lodash'
+import { shuffle, cloneDeep } from 'lodash'
 import lineByLine from 'n-readlines'
-import winston from 'winston'
-import fs from 'fs'
+import * as winston from 'winston'
+import * as fs from 'fs'
 
 type completeCode = 0 | 1
 type bool = true | false
@@ -40,8 +40,8 @@ class SPAStudent {
       format: winston.format.json(),
       defaultMeta: { service: 'user-service' },
       transports: [
-        new winston.transports.File({ filename: 'error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'combined.log' }),
+        // new winston.transports.File({ filename: 'error.log', level: 'error' }),
+        // new winston.transports.File({ filename: 'combined.log' }),
       ],
     })
     this.logger.add(new winston.transports.Console({
