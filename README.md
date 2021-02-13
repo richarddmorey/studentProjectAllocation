@@ -187,8 +187,6 @@ out$allocation %>%
 student_allocation %>%
   group_by(rank) %>%
   summarise(n = n())
-    
-
 
 ## Project-centered output
 out$allocation %>%
