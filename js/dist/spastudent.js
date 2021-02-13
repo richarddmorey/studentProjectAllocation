@@ -352,7 +352,7 @@ class SPAStudent {
             const l = this.projects[p].lecturer;
             const lCap = this.lecturers[l].cap;
             if (this.projectAssignments[p] === undefined || this.projectAssignments[p].length === 0) {
-                out.push({ student: 'NA', project: p, 'pCap': pCap, lecturer: l, 'lCap': lCap });
+                out.push({ student: null, project: p, 'pCap': pCap, lecturer: l, 'lCap': lCap });
             }
             else {
                 for (const s of this.projectAssignments[p]) {
@@ -361,7 +361,7 @@ class SPAStudent {
             }
         }
         for (const s of this.unallocated) {
-            out.push({ student: s, project: 'NA', pCap: 'NA', lecturer: 'NA', lCap: 'NA' });
+            out.push({ student: s, project: null, pCap: null, lecturer: null, lCap: null });
         }
         return out;
     }
