@@ -9,10 +9,15 @@
 *  (doi:10.1016/j.jda.2006.03.006)
 *********/
 
-import { shuffle, cloneDeep } from 'lodash'
-import lineByLine from 'n-readlines'
-import * as winston from 'winston'
-import * as fs from 'fs'
+import seedrandom from 'seedrandom'
+
+// https://stackoverflow.com/a/12646864/1129889
+function shuffle(array: any[], rng: any) {
+  for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+  }
+}
 
 type completeCode = 0 | 1
 type bool = true | false
@@ -21,45 +26,60 @@ interface SPAStudentOptions {
   shuffleInit: bool,
   iterationLimit: number,
   timeLimit: number,
-  logLevel: string
+  logToConsole: bool,
+  validateInput: bool,
+  rngSeed: string | undefined
 }
 class SPAStudent {
-  constructor(lecturersFile: string, projectsFile: string, studentsFile: string, options: SPAStudentOptions) {
+  constructor(lecturers: any, projects: any, students: any, options: SPAStudentOptions) {
+
+    if (lecturers === undefined || projects === undefined || students === undefined)
+      throw new Error("Arguments lecturers, projects, and students must all be defined.")
 
     const options0: SPAStudentOptions = {
       shuffleInit: true,
       iterationLimit: 10000,
       timeLimit: 60,
-      logLevel: 'info'
+      logToConsole: false,
+      validateInput: true,
+      rngSeed: undefined
     }
     Object.assign(options0, options)
     this.options = options0
 
-    this.logger = winston.createLogger({
-      level: this.options.logLevel,
-      format: winston.format.json(),
-      defaultMeta: { service: 'user-service' },
-      transports: [
-        // new winston.transports.File({ filename: 'error.log', level: 'error' }),
-        // new winston.transports.File({ filename: 'combined.log' }),
-      ],
-    })
-    this.logger.add(new winston.transports.Console({
-      format: winston.format.simple(),
-    }))
+    this.rng = seedrandom(this.options.rngSeed);
+
+    this.log = []
+    this.logger = {
+      log :(type: string, message: string) => {
+        const line = { 'type': type, 'message': message, time: Date.now() }
+        this.log.push(line)
+        if (this.options.logToConsole)
+          console.log(`${line.time} [${line.type}]: ${line.message}`)
+      }
+    }
+
+    if (this.options.validateInput) {
+      const v = this.validateInput(lecturers, projects, students)
+      if(!v) throw new Error(`Could not validate input.`)
+    }
+    this.lecturers = lecturers
+    this.projects = projects
+    this.students = students
 
     this.fullProjects = new Set()
+    for (const p of Object.keys(projects))
+      if (this.projects[p].cap < 1) this.fullProjects.add(p)
+
     this.fullLecturers = new Set()
-    this.logger.log('info', 'Loading files')
-    this.readLecturersFile(lecturersFile)
-    this.readProjectsFile(projectsFile)
-    this.readStudentsFile(studentsFile)
+    for (const l of Object.keys(lecturers))
+      if (this.lecturers[l].cap < 1) this.fullLecturers.add(l)
 
     this.unallocated = Object.keys(this.students)
 
     if (this.options.shuffleInit) {
       this.logger.log('info', 'Shuffling students')
-      this.unallocated = shuffle(this.unallocated)
+      shuffle(this.unallocated, this.rng)
     }
 
     this.logger.log('info', 'Creating projected preferences')
@@ -76,6 +96,9 @@ class SPAStudent {
 
   options: SPAStudentOptions
   logger: any
+  log: object[]
+
+  rng: any
 
   lecturers: any
   projects: any
@@ -95,62 +118,27 @@ class SPAStudent {
   startTime: number | null
   endTime: number | null
 
-  readLecturersFile(lecturersFile: string): any {
-    const lectLines = new lineByLine(lecturersFile)
-    const lecturers: any = {}
-    while (true) {
-      const line = lectLines.next()
-      if (!line) break
-      const a: string[] = line.toString('ascii').trim().split(/\s+/)
-      const id = a.shift()
-      if (id === undefined) continue
-      if (lecturers[id] !== undefined) throw new Error(`Duplicate id in lecturers file: ${id}`)
-      const cap: number = parseInt(a.shift() || '0', 10)
-      if (cap < 1) this.fullLecturers.add(id)
-      lecturers[id] = {
-        'cap': cap, 'prefs': [...new Set(a)], 'projects': new Set()
+
+  validateInput(lecturers: any, projects: any, students: any): bool {
+    const pkeys = Object.keys(projects)
+    const skeys = Object.keys(students)
+    const lkeys = Object.keys(lecturers)
+    if (lkeys.length < 1) throw new Error("Must have at least one lecturer.")
+    if (skeys.length < 1) throw new Error("Must have at least one student.")
+    if (pkeys.length < 2) throw new Error("Must have at least two projects.")
+
+    for (const p of pkeys) {
+      if(isNaN(projects[p].cap)) throw new Error(`Cap for project ${p} is not a number.`)
+      const l = projects[p].lecturer
+      if(isNaN(lecturers[l].cap)) throw new Error(`Cap for lecturer ${l} is not a number.`)
+      if (lecturers[l] === undefined) throw new Error(`Project ${p} lists lecturer ${l} as supervisor, but ${l} was not found in the lecturer list.`)
+    }
+    for (const s of skeys) {
+      for (const p of students[s].prefs) {
+        if (projects[p] === undefined) throw new Error(`Student ${s} lists project ${p} as preference, but ${p} was not found in the projects list.`)
       }
     }
-    this.logger.log('info', 'Lecturers loaded')
-    this.lecturers = lecturers
-  }
-
-  readProjectsFile(projectsFile: string): any {
-    const projLines = new lineByLine(projectsFile)
-    const projects: any = {}
-    while (true) {
-      const line = projLines.next()
-      if (!line) break
-      const [id, cap, lecturer] = line.toString('ascii').trim().split(/\s+/)
-      if (id === undefined) continue
-      if (projects.id !== undefined) throw new Error(`Duplicate id in projects file: ${id}`)
-      if (this.lecturers[lecturer] === undefined) throw new Error(`Lecturer ${lecturer} is named as supervisor of project ${id} but was not in the lecturers list.`)
-      const capn: number = parseInt(cap || '0', 10)
-      if (capn < 1) this.fullProjects.add(id)
-      projects[id] = { 'cap': capn, 'lecturer': lecturer }
-      this.lecturers[lecturer].projects.add(id)
-    }
-    this.logger.log('info', 'Projects loaded')
-    this.projects = projects
-  }
-
-  readStudentsFile(studentsFile: string): any {
-    const studLines = new lineByLine('../perl/input/students.txt')
-    const students: any = {}
-    while (true) {
-      const line = studLines.next()
-      if (!line) break
-      const a: string[] = line.toString('ascii').trim().split(/\s+/)
-      const id = a.shift()
-      if (id === undefined) continue
-      if (students.id !== undefined) throw new Error(`Duplicate id in students file: ${id}`)
-      for (const p of a) {
-        if (this.projects[p] === undefined) throw new Error(`Project ${p} is listed by student ${id} but was not in the projects list.`)
-      }
-      students[id] = { 'prefs': [...new Set(a)] }
-    }
-    this.logger.log('info', 'Students loaded')
-    this.students = students
+    return true
   }
 
   /************
@@ -164,7 +152,10 @@ class SPAStudent {
   *  by the student list.
   *************/
   projectedPrefLk() {
-    this.lecturersPP = cloneDeep(this.lecturers)
+    this.lecturersPP = {}
+    for (const l of Object.keys(this.lecturers))
+      this.lecturersPP[l] = {prefs: this.lecturers[l].prefs}
+
     for (const s of this.unallocated) {
       for (const p of this.students[s].prefs) {
         if (this.lecturersPP[this.projects[p].lecturer].prefs.indexOf(s) === -1) {
@@ -177,16 +168,15 @@ class SPAStudent {
 
   // projectsPP is L_k^j in Abraham et al.
   projectedPrefLkj() {
-    const projectsPP: any = {}
+    this.projectsPP = {}
     for (const p of Object.keys(this.projects)) {
-      projectsPP[p] = { 'prefs': [] }
+      this.projectsPP[p] = { 'prefs': [] }
       for (const s of this.lecturersPP[this.projects[p].lecturer].prefs) {
         if (this.students[s].prefs.indexOf(p) !== -1) {
-        projectsPP[p].prefs.push(s)
+        this.projectsPP[p].prefs.push(s)
         }
       }
     }
-    this.projectsPP = projectsPP
     this.logger.log('info', 'Created projects projected preferences')
   }
 
@@ -395,7 +385,7 @@ class SPAStudent {
         this.logger.log('info', 'Break: no free projects/lecturers')
         break
       }
-      const p = freeProjects[Math.floor(Math.random() * freeProjects.length)]
+      const p = freeProjects[Math.floor(this.rng() * freeProjects.length)]
       const pCap: number = this.projects[p].cap
       const l: string = this.projects[p].lecturer
       const lCap: number = this.lecturers[l].cap
@@ -418,34 +408,24 @@ class SPAStudent {
     }
   }
 
-  output(path: string) {
-
-    if (fs.existsSync(path)) {
-      throw new Error(`File ${path} exists. Will not overwrite.`)
-      return 1
-    }
-    const dump = fs.createWriteStream(path, {
-        flags: 'a' // 'a' means appending (old data will be preserved)
-    })
-
-    dump.write('student project project_cap lecturer lecturer_cap\n') // append string to your file
+  output() {
+    const out = []
     for (const p of Object.keys(this.projects)) {
       const pCap = this.projects[p].cap
       const l = this.projects[p].lecturer
       const lCap = this.lecturers[l].cap
       if (this.projectAssignments[p] === undefined || this.projectAssignments[p].length === 0) {
-        dump.write(`NA ${p} ${pCap} ${l} ${lCap}\n`)
+        out.push({ student: 'NA', project: p, 'pCap': pCap, lecturer: l, 'lCap': lCap })
       } else {
         for (const s of this.projectAssignments[p]) {
-          dump.write(`${s} ${p} ${pCap} ${l} ${lCap}\n`)
+          out.push({ student: s, project: p, 'pCap': pCap, lecturer: l, 'lCap': lCap })
         }
       }
     }
-    for (const s of this.unallocated){
-      dump.write(`${s} NA NA NA NA\n`)
+    for (const s of this.unallocated) {
+      out.push({ student: s, project: 'NA', pCap: 'NA', lecturer: 'NA', lCap: 'NA' })
     }
-    dump.end()
-    return 0
+    return out
   }
 }
 
