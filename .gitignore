@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 *.dcf
+js/node_modules
+js/combined.log
+js/error.log

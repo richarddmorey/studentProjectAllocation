@@ -157,6 +157,61 @@ You can set various options using the `studentAllocation::pkg_options` function,
 
 For instance, you can turn on logging by running `studentAllocation::pkg_options( print_log = TRUE )` before `spa_student`.
 
+
+## Javascript version (`js/`)
+
+There is a working javascript version that will become the main code used for the R package and the web in order to minimize work needed to maintain the code. The R package now contains the function `spa_student_js` that will run the javascript version using {V8}. You can test this by loading the files as above and running:
+
+```
+out = studentAllocation::spa_student_js(stud_list, lect_list, proj_list)
+```
+
+The output is in a tidier format than the R function yields. `$allocation` gives a data frame containing the student allocation, and `$log` gives a detailed log of what was done.
+
+You can then obtain neat output:
+
+```
+library(dplyr)
+
+delim = studentAllocation::pkg_options()$neat_delim
+
+## Student-centered output
+out$allocation %>%
+  filter(!is.na(student)) %>%
+  group_by(student) %>%
+  mutate(
+    rank = match(x = project,
+                 table = stud_list[[student]])
+    ) -> student_allocation
+
+student_allocation %>%
+  group_by(rank) %>%
+  summarise(n = n())
+    
+
+
+## Project-centered output
+out$allocation %>%
+  group_by(project) %>%
+  summarise(
+    n = sum(!is.na(student)),
+    cap = first(pCap),
+    lecturer = first(lecturer),
+    group = paste(student, collapse = delim)
+    )
+
+## Lecturer-centered output
+out$allocation %>%
+  group_by(lecturer) %>%
+  summarise(
+    n = sum(!is.na(student)),
+    cap = first(lCap),
+    projects = paste(unique(project), collapse = delim),
+    group = paste(student, collapse = delim)
+  )
+```
+
+
 ## Perl version (`perl/`)
 
 The main code is in the `bin` directory. Input files containing details of the student preferences (`students.txt`), lecturer preferences (`lecturers.txt`), and projects offered by lecturers (`projects.txt`) are placed in the `input` directory. Example input files are offered.
