@@ -69,8 +69,10 @@ spa_student_js <- function( student_list, lecturer_list, project_list,
   return(
     list(
       allocation = ctx$get("out"), 
-      log = ctx$get("log")
+      log = ctx$get("log"),
+      iterations = ctx$get("s.iterations"),
+      unallocated_after_SPA = ctx$get("s.unallocatedAfterSPA"),
+      unallocated = ctx$get("s.unallocated")
     )
   )
-  
 }

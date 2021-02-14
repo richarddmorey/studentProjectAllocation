@@ -168,56 +168,7 @@ out = studentAllocation::spa_student_js(stud_list, lect_list, proj_list)
 
 The output is in a tidier format than the R function yields. `$allocation` gives a data frame containing the student allocation, and `$log` gives a detailed log of what was done.
 
-You can then obtain neat output:
-
-```
-library(dplyr)
-
-delim = studentAllocation::pkg_options()$neat_delim
-
-## Student-centered output
-out$allocation %>%
-  filter(!is.na(student)) %>%
-  group_by(student) %>%
-  mutate(
-    rank = case_when(
-      is.na(project) ~ NA_integer_,
-      TRUE ~ match(x = project,
-            table = students[[student]],
-            nomatch = -1)
-    )) -> student_allocation
-
-## Who got their preferences? 
-## NA means not allocated,
-## -1 means they were allocated to something 
-##    not on their list
-student_allocation %>%
-  group_by(rank) %>%
-  summarise(n = n())
-
-## Lecturer-centered output
-out$allocation %>%
-  filter(!is.na(student)) %>%
-  filter(!is.na(project)) %>%
-  group_by(lecturer) %>%
-  summarise(
-    n = sum(!is.na(student)),
-    cap = first(lCap),
-    projects = paste(unique(project), collapse = delim),
-    group = paste(student, collapse = delim)
-  )
-
-## Project-centered output
-out$allocation %>%
-  filter(!is.na(student)) %>%
-  filter(!is.na(project)) %>%
-  group_by(project) %>%
-  summarise(
-    n = sum(!is.na(student)),
-    cap = first(pCap),
-    group = paste(student, collapse = delim)
-  )
-```
+You can then obtain neat output with the `neat_*_output_js` functions.
 
 
 ## Perl version (`perl/`)

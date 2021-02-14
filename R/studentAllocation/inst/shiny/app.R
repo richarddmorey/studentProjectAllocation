@@ -12,7 +12,7 @@ vals <- reactiveValues(lect_list = NULL,
                        log = NULL, 
                        output_file = NULL)
 
-create_output_file <- function(allocation_output, lect_file, proj_file, stud_file, delim){
+create_output_file <- function(allocation_output, lect_file, proj_file, stud_file, stud_list, delim){
   
   # set up output directory
   td = tempdir(check = TRUE)
@@ -26,26 +26,26 @@ create_output_file <- function(allocation_output, lect_file, proj_file, stud_fil
   
   lecturer_allocation_fn = file.path(save_dir, "lecturer_allocation.csv")
   rio::export(
-    x = studentAllocation::neat_lecturer_output(allocation_output, delim = delim),
+    x = studentAllocation::neat_lecturer_output_js(allocation_output, delim = delim),
     file = lecturer_allocation_fn
   )
 
   project_allocation_fn = file.path(save_dir, "project_allocation.csv")
   rio::export(
-    x = studentAllocation::neat_project_output(allocation_output, delim = delim),
+    x = studentAllocation::neat_project_output_js(allocation_output, delim = delim),
     file = project_allocation_fn
   )
 
   student_allocation_fn = file.path(save_dir, "student_allocation.csv")
   rio::export(
-    x = studentAllocation::neat_student_output(allocation_output),
+    x = studentAllocation::neat_student_output_js(allocation_output, stud_list),
     file = student_allocation_fn
   )
-
-  if(length(allocation_output$unallocated_students)){
+  
+  if(length(allocation_output$unallocated)){
     unallocated_students_fn = file.path(save_dir, "unallocated_students.txt")
     cat(file = unallocated_students_fn, sep = "\n",
-        allocation_output$unallocated_students
+        allocation_output$unallocated
     )
   }
   
@@ -327,24 +327,24 @@ server <- function(input, output, session) {
     # Add dependency on re-run button
     input$rerun_allocation
     
+    ctx = V8::v8()
+    
+    start_time = Sys.time()
+    
     tryCatch(
       {
-        algo_messages <- capture.output(
-          type = "message",
-        {
-        algo_output <- studentAllocation::spa_student(
+        algo_output <- studentAllocation::spa_student_js(
           vals$stud_list,
           vals$lect_list,
           vals$proj_list,
           randomize = input$opt_randomize,
           distribute_unallocated = input$opt_distribute,
-          favor_student_prefs = FALSE,
           time_limit = input$opt_max_time,
           iteration_limit = ifelse(input$opt_max_iters < 1,
                                    Inf,
-                                   input$opt_max_iters)
+                                   input$opt_max_iters),
+          ctx = ctx
           )
-        })
       },
       error = function(e) {
         vals$log = NULL
@@ -352,6 +352,8 @@ server <- function(input, output, session) {
         stop(safeError(e))
       }
     )
+    
+    end_time = Sys.time()
     
     vals$algo_done = TRUE
     vals$total_effective_cap = sum(studentAllocation::effective_capacity(vals$lect_list, vals$proj_list))
@@ -361,22 +363,23 @@ server <- function(input, output, session) {
       lect_file = input$lect_file,
       proj_file = input$proj_file,
       stud_file = input$stud_file,
+      stud_list = vals$stud_list,
       delim = input$neat_delim
     )
                                   
     shinyjs::show("download_all_div")
-    vals$log = algo_messages
+    vals$log = algo_output$log$message
     
     summary_string = paste0("<p> Performed ", algo_output$iterations,
-          " iterations in ", round(algo_output$time, 3), " seconds. ",
-          " There are ", length(algo_output$unallocated_students), " unallocated students. ")
+          " iterations in ", round(as.numeric(end_time - start_time), 3), " seconds. ",
+          " There are ", length(algo_output$unallocated), " unallocated students. ")
     
     if(input$opt_distribute){
       summary_string = paste0(
         summary_string,
-        length(algo_output$unallocated_after_spa), 
+        length(algo_output$unallocated_after_SPA), 
         " students (",
-        round(100 * length(algo_output$unallocated_after_spa) / length(vals$stud_list))
+        round(100 * (length(algo_output$unallocated_after_SPA) - length(algo_output$unallocated)) / length(vals$stud_list))
         ,"%) ",
         " were assigned random projects."
       )

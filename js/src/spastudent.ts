@@ -76,6 +76,7 @@ class SPAStudent {
       if (this.lecturers[l].cap < 1) this.fullLecturers.add(l)
 
     this.unallocated = Object.keys(this.students)
+    this.unallocatedAfterSPA = []
 
     if (this.options.shuffleInit) {
       this.logger.log('info', 'Shuffling students')
@@ -104,6 +105,7 @@ class SPAStudent {
   projects: any
   students: any
   unallocated: string[]
+  unallocatedAfterSPA: string[]
 
   fullProjects: any
   fullLecturers: any
@@ -373,7 +375,7 @@ class SPAStudent {
     }
     this.endTime = Date.now()
     this.logger.log('info', `Ended algorithm at ${this.endTime}; took ${this.endTime - this.startTime}ms. ${this.unallocated.length} students unallocated`)
-
+    this.unallocatedAfterSPA = [...this.unallocated]
   }
 
   randomizeUnallocated() {

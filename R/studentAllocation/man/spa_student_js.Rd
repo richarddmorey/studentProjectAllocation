@@ -13,7 +13,7 @@ spa_student_js(
   time_limit = pkg_options()$time_limit,
   distribute_unallocated = pkg_options()$distribute_unallocated,
   seed = NULL,
-  validate = FALSE,
+  validate = TRUE,
   ctx = V8::v8()
 )
 }
