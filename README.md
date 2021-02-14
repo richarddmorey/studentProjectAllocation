@@ -173,6 +173,18 @@ You can then obtain neat output:
 ```
 library(dplyr)
 
+## What was the effective cap for each lecturer?
+out$allocation %>%
+  filter(!is.na(project)) %>%
+  group_by(project) %>%
+  summarise(lecturer = first(lecturer),
+  pCap = first(pCap),
+  lCap = first(lCap)) %>%
+  group_by(lecturer) %>%
+  summarise(lCap = first(lCap),
+  pCap = sum(pCap)) %>%
+  mutate(eCap = pmin(lCap, pCap))
+  
 delim = studentAllocation::pkg_options()$neat_delim
 
 ## Student-centered output
@@ -180,31 +192,41 @@ out$allocation %>%
   filter(!is.na(student)) %>%
   group_by(student) %>%
   mutate(
-    rank = match(x = project,
-                 table = stud_list[[student]])
-    ) -> student_allocation
+    rank = case_when(
+      is.na(project) ~ NA_integer_,
+      TRUE ~ match(x = project,
+            table = students[[student]],
+            nomatch = -1)
+    )) -> student_allocation
 
+## Who got their preferences? 
+## NA means not allocated,
+## -1 means they were allocated to something 
+##    not on their list
 student_allocation %>%
   group_by(rank) %>%
   summarise(n = n())
 
-## Project-centered output
-out$allocation %>%
-  group_by(project) %>%
-  summarise(
-    n = sum(!is.na(student)),
-    cap = first(pCap),
-    lecturer = first(lecturer),
-    group = paste(student, collapse = delim)
-    )
-
 ## Lecturer-centered output
 out$allocation %>%
+  filter(!is.na(student)) %>%
+  filter(!is.na(project)) %>%
   group_by(lecturer) %>%
   summarise(
     n = sum(!is.na(student)),
     cap = first(lCap),
     projects = paste(unique(project), collapse = delim),
+    group = paste(student, collapse = delim)
+  )
+
+## Project-centered output
+out$allocation %>%
+  filter(!is.na(student)) %>%
+  filter(!is.na(project)) %>%
+  group_by(project) %>%
+  summarise(
+    n = sum(!is.na(student)),
+    cap = first(pCap),
     group = paste(student, collapse = delim)
   )
 ```

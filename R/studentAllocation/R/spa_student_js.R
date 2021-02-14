@@ -10,6 +10,8 @@
 #' @param time_limit Time limit in seconds on the algorithm
 #' @param distribute_unallocated Randomly distribute unallocated students at the end?
 #' @param seed Random seed passed to seedrandom 
+#' @param validate perform validation of the inputs in javascript?
+#' @param ctx V8 context (for debugging)
 
 #' @return
 #' @export
@@ -24,15 +26,14 @@ spa_student_js <- function( student_list, lecturer_list, project_list,
                            iteration_limit = pkg_options()$iteration_limit,
                            time_limit = pkg_options()$time_limit,
                            distribute_unallocated = pkg_options()$distribute_unallocated,
-                           seed = NULL){
-  ctx = V8::v8()
+                           seed = NULL, validate = TRUE, ctx = V8::v8()){
   
   opts = list(
     shuffleInit = randomize,
     iterationLimit = iteration_limit,
     timeLimit = time_limit,
     logToConsole = FALSE,
-    validateInput = FALSE
+    validateInput = validate
   ) 
 
   if(!is.null(seed))
@@ -40,21 +41,21 @@ spa_student_js <- function( student_list, lecturer_list, project_list,
     
   ctx$assign("opts", opts)
   
-  lect_list  %>%
+  lecturer_list  %>%
     purrr::map(function(el){
       el$prefs = el$students
       el$students = NULL
       return(el)
     }) %>%
-  ctx$assign("lecturers", .)
+  ctx$assign("lecturers", ., auto_unbox = FALSE)
 
-  ctx$assign("projects", proj_list)
+  ctx$assign("projects", project_list)
   
-  stud_list %>%
+  student_list %>%
     purrr::map(function(el){
       return(list(prefs=el))
     }) %>%
-    ctx$assign("students", .)
+    ctx$assign("students", ., auto_unbox = FALSE)
   
   
   ctx$source(system.file("js/bundle.js", package = "studentAllocation"))
@@ -64,7 +65,7 @@ spa_student_js <- function( student_list, lecturer_list, project_list,
     ctx$eval("s.randomizeUnallocated()")
   ctx$eval("const out = s.output()")
   ctx$eval("const log = s.log")
-
+  
   return(
     list(
       allocation = ctx$get("out"), 

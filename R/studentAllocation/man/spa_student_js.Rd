@@ -12,7 +12,9 @@ spa_student_js(
   iteration_limit = pkg_options()$iteration_limit,
   time_limit = pkg_options()$time_limit,
   distribute_unallocated = pkg_options()$distribute_unallocated,
-  seed = NULL
+  seed = NULL,
+  validate = FALSE,
+  ctx = V8::v8()
 )
 }
 \arguments{
@@ -31,6 +33,10 @@ spa_student_js(
 \item{distribute_unallocated}{Randomly distribute unallocated students at the end?}
 
 \item{seed}{Random seed passed to seedrandom}
+
+\item{validate}{perform validation of the inputs in javascript?}
+
+\item{ctx}{V8 context (for debugging)}
 }
 \value{
 
