@@ -357,7 +357,10 @@ server <- function(input, output, session) {
           )
       },
       error = function(e) {
-        vals$log = ctx$get("s.log")$message
+        x = try(ctx$get("s.log"), silent = TRUE)
+        if(!inherits(x, "try-error")){
+          vals$log = x$message
+        }
         # return a safeError if a parsing error occurs
         stop(safeError(e))
       }
