@@ -21,7 +21,7 @@
 #' @importFrom purrr map
 #'
 #' @examples
-spa_student_js <- function( student_list, lecturer_list, project_list,
+spa_student <- function( student_list, lecturer_list, project_list,
                            randomize = pkg_options()$randomize,
                            iteration_limit = pkg_options()$iteration_limit,
                            time_limit = pkg_options()$time_limit,

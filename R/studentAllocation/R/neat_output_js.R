@@ -9,7 +9,7 @@
 #' @importFrom dplyr filter group_by summarise first `%>%`
 #'
 #' @examples
-neat_lecturer_output_js <- function( allocation_output, delim = pkg_options()$neat_delim ){
+neat_lecturer_output <- function( allocation_output, delim = pkg_options()$neat_delim ){
   
   allocation_output$allocation %>%
     filter(!is.na(student)) %>%
@@ -39,7 +39,7 @@ neat_lecturer_output_js <- function( allocation_output, delim = pkg_options()$ne
 #' @importFrom dplyr filter group_by summarise first `%>%`
 #'
 #' @examples
-neat_project_output_js <- function( allocation_output, delim = pkg_options()$neat_delim ){
+neat_project_output <- function( allocation_output, delim = pkg_options()$neat_delim ){
   
   allocation_output$allocation %>%
     filter(!is.na(student)) %>%
@@ -68,7 +68,7 @@ neat_project_output_js <- function( allocation_output, delim = pkg_options()$nea
 #' @importFrom dplyr filter group_by mutate `%>%`
 #'
 #' @examples
-neat_student_output_js <- function( allocation_output, student_list ){
+neat_student_output <- function( allocation_output, student_list ){
   
   allocation_output$allocation %>%
     filter(!is.na(student)) %>%

@@ -10,6 +10,8 @@ There are two versions of the algorithm, one (older) written in Perl (under `per
 
 ## R version (`R/studentAllocation`)
 
+*As of February 2021, The underlying code to run the R version is now implemented in javascript run using the V8 package. The javascript code is under js/.*
+
 First, install the `devtools` package in R. Then use it to install the `studentAllocation` package from this repository:
 
 ```
@@ -65,10 +67,10 @@ Right now, some consistency checking is done when loading files, but none by the
 Use the `spa_student` function with the list objects just created to run the algorithm:
 
 ```
-e = studentAllocation::spa_student( stud_list, lect_list, proj_list )
+out = studentAllocation::spa_student( stud_list, lect_list, proj_list )
 ```
 
-The result is an environment `e` containing all the output. 
+The result is an list containing all the output. *Note that the format of the output has changed since February 2021*.
 
 ### Output
 
@@ -76,14 +78,10 @@ For now, this is just quick and dirty; in the future the output will be easier t
 
 | Object                   | Type            | Description                                                 |
 |:-------------------------|:----------------|:------------------------------------------------------------|
-| `student_assignments`    | list            | Which projects are assigned to each student                 |
-| `lecturer_assignments`   | list            | Which students are assigned to each lecturer                |
-| `project_assignments`    | list            | Which students are assigned to each project                 |
-| `unallocated_students`   | char. vector    | Which students are unallocated at the end                   |
-| `unallocated_after_spa`  | char. vector    | Which students were unallocated before random distribution  |
-| `full_lecturers`         | char. vector    | Which lecturers are at their cap                            |
-| `full_projects`          | char. vector    | Which projects are at their cap                             |
-| `time`                   | time difference | How long the algorithm took to run                          |
+| `allocation`             | data.frame      | Which projects are assigned to each student                 |
+| `log`                    | data.frame      | The log of events                                           |
+| `unallocated`            | char. vector    | Which students are unallocated at the end                   |
+| `unallocated_after_SPA`  | char. vector    | Which students were unallocated before random distribution  |
 | `iterations`             | integer         | How many spa-student iterations were needed                 |
 
 
@@ -94,7 +92,7 @@ The functions `studentAllocation::neat_project_output()`, `studentAllocation::ne
 Until neater output is available, you can produce nicer output yourself. For instance, you might want to create a `tibble` containing the student assignments and their ranking of that assignment. You can do it like this:
 
 ```
-student_assignments = studentAllocation::neat_student_output(e)
+student_assignments = studentAllocation::neat_student_output(out, stud_list)
 ```
 
 The output in `student_assignments` will look something like this:
@@ -102,20 +100,21 @@ The output in `student_assignments` will look something like this:
 ```
 student_assignments
 
-# # A tibble: 100 x 4
-#    student project lecturer student_ranking
-#    <chr>   <chr>   <chr>       <int>
-#  1 s1      p1      l1              1
-#  2 s6      p1      l1              1
-#  3 s10     p1      l1              1
-#  4 s27     p1      l1              1
-#  5 s74     p1      l1              1
-#  6 s3      p10     l10             1
-#  7 s4      p10     l10             1
-#  8 s5      p10     l10             1
-#  9 s20     p10     l10             1
-# 10 s57     p10     l10             1
-# # … with 90 more rows
+## A tibble: 100 x 7
+## Groups:   student [100]
+#   student project  pCap lecturer  lCap assigned student_ranking
+#   <chr>   <chr>   <int> <chr>    <int> <lgl>              <int>
+# 1 s1      p1          5 l1           5 TRUE                   1
+# 2 s6      p1          5 l1           5 TRUE                   1
+# 3 s10     p1          5 l1           5 TRUE                   1
+# 4 s27     p1          5 l1           5 TRUE                   1
+# 5 s74     p1          5 l1           5 TRUE                   1
+# 6 s17     p2          5 l2           5 TRUE                   1
+# 7 s54     p2          5 l2           5 TRUE                   1
+# 8 s56     p2          5 l2           5 TRUE                   1
+# 9 s58     p2          5 l2           5 TRUE                   1
+#10 s78     p2          5 l2           5 TRUE                   1
+## ... with 90 more rows
 ```
 
 We can also check the distribution of rankings to see how good the allocation was:
@@ -150,25 +149,8 @@ You can set various options using the `studentAllocation::pkg_options` function,
 | `randomize`               | logical  | `FALSE` | Randomize the student order at the start?                               |
 | `iteration_limit`         | integer  | `Inf`   | Limit on the number of iterations for the algorithm (Inf for no limit)  |
 | `time_limit`              | numeric  | `60`    | Limit (in seconds) on the time the algorithm runs                       |
-| `distribute_unallocated`  | logical  | `TRUE`  | Randomly distribute the unallocated students after the algorithm runs?  |
-| `favor_student_prefs`     | logical  | `FALSE` | Experimental. Favor student preferences over lecturer preferences when ordering students? For Abraham et al's (2007) spa-student algorithm this should be `FALSE`. Do not set this to `TRUE` if you want the algorithm to finish.                                                         |
-| `print_log`               | logical  | `FALSE` | Print log messages?                                                     |
+| `distribute_unallocated`  | logical  | `TRUE`  | Randomly distribute the unallocated students after the algorithm runs?  |        
 | `neat_delim`              | character  | `;` |  Character used to paste together multiple elements in a field in neat output     |
-
-For instance, you can turn on logging by running `studentAllocation::pkg_options( print_log = TRUE )` before `spa_student`.
-
-
-## Javascript version (`js/`)
-
-There is a working javascript version that will become the main code used for the R package and the web in order to minimize work needed to maintain the code. The R package now contains the function `spa_student_js` that will run the javascript version using {V8}. You can test this by loading the files as above and running:
-
-```
-out = studentAllocation::spa_student_js(stud_list, lect_list, proj_list)
-```
-
-The output is in a tidier format than the R function yields. `$allocation` gives a data frame containing the student allocation, and `$log` gives a detailed log of what was done.
-
-You can then obtain neat output with the `neat_*_output_js` functions.
 
 
 ## Perl version (`perl/`)

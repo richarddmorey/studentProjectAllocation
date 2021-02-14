@@ -26,19 +26,19 @@ create_output_file <- function(allocation_output, lect_file, proj_file, stud_fil
   
   lecturer_allocation_fn = file.path(save_dir, "lecturer_allocation.csv")
   rio::export(
-    x = studentAllocation::neat_lecturer_output_js(allocation_output, delim = delim),
+    x = studentAllocation::neat_lecturer_output(allocation_output, delim = delim),
     file = lecturer_allocation_fn
   )
 
   project_allocation_fn = file.path(save_dir, "project_allocation.csv")
   rio::export(
-    x = studentAllocation::neat_project_output_js(allocation_output, delim = delim),
+    x = studentAllocation::neat_project_output(allocation_output, delim = delim),
     file = project_allocation_fn
   )
 
   student_allocation_fn = file.path(save_dir, "student_allocation.csv")
   rio::export(
-    x = studentAllocation::neat_student_output_js(allocation_output, stud_list),
+    x = studentAllocation::neat_student_output(allocation_output, stud_list),
     file = student_allocation_fn
   )
   
@@ -129,7 +129,9 @@ ui <- dashboardPage(
                    actionButton("toggle_log", "Show/hide log"),
                    hidden(
                      div( id = "log_div",
-                          verbatimTextOutput("log_text")
+                          verbatimTextOutput("log_text"),
+                          tags$head(tags$style("#log_text{ 
+overflow-y:scroll; background: ghostwhite; max-height: 30em;}"))
                      )
                    )
                    )
@@ -333,7 +335,7 @@ server <- function(input, output, session) {
     
     tryCatch(
       {
-        algo_output <- studentAllocation::spa_student_js(
+        algo_output <- studentAllocation::spa_student(
           vals$stud_list,
           vals$lect_list,
           vals$proj_list,
@@ -401,7 +403,11 @@ server <- function(input, output, session) {
 
   output$log_text <- renderText({
     req(vals$log)
-    paste(vals$log, collapse = "\n")
+    l = length(vals$log)
+    digits = ceiling(log10(l))
+    fmt = paste0("%0",digits,"d")
+    lineno = sprintf(fmt, 1:l)
+    paste(paste(lineno, "    ", vals$log), collapse = "\n")
   })
     
 }
