@@ -173,18 +173,6 @@ You can then obtain neat output:
 ```
 library(dplyr)
 
-## What was the effective cap for each lecturer?
-out$allocation %>%
-  filter(!is.na(project)) %>%
-  group_by(project) %>%
-  summarise(lecturer = first(lecturer),
-  pCap = first(pCap),
-  lCap = first(lCap)) %>%
-  group_by(lecturer) %>%
-  summarise(lCap = first(lCap),
-  pCap = sum(pCap)) %>%
-  mutate(eCap = pmin(lCap, pCap))
-  
 delim = studentAllocation::pkg_options()$neat_delim
 
 ## Student-centered output
