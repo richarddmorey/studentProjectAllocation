@@ -321,7 +321,15 @@ server <- function(input, output, session) {
   
   output$algo_output <- renderUI({
     
+
     validate(need(vals$algo_ready, "Upload the required files under the tabs to the left."))
+    
+    val_input = try(
+      studentAllocation::check_input_lists(vals$student_list, vals$lecturer_list, vals$project_list ),
+      silent = TRUE
+      )
+    validate(need(!inherits(val_input, "try-error"), val_input))
+    
     studentAllocation::pkg_options(print_log = TRUE)
     
     shinyjs::hide("download_all_div")
@@ -339,17 +347,17 @@ server <- function(input, output, session) {
           vals$stud_list,
           vals$lect_list,
           vals$proj_list,
-          randomize = input$opt_randomize,
-          distribute_unallocated = input$opt_distribute,
-          time_limit = input$opt_max_time,
-          iteration_limit = ifelse(input$opt_max_iters < 1,
+          randomize = isolate(input$opt_randomize),
+          distribute_unallocated = isolate(input$opt_distribute),
+          time_limit = isolate(input$opt_max_time),
+          iteration_limit = ifelse(isolate(input$opt_max_iters) < 1,
                                    Inf,
-                                   input$opt_max_iters),
+                                   isolate(input$opt_max_iters)),
           ctx = ctx
           )
       },
       error = function(e) {
-        vals$log = NULL
+        vals$log = ctx$get("s.log")$message
         # return a safeError if a parsing error occurs
         stop(safeError(e))
       }
