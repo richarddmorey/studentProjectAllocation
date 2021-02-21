@@ -34,7 +34,7 @@ The interface looks something like this:
 
 Full instructions for using the shiny app are included in the interface. You may not even have to read any further than this.
 
-You can also access the shiny app [here](https://richarddmorey.shinyapps.io/studentAllocation/). This link is for demonstration. If you plan on using the app often, though, please do it on your own computer. 
+*I have taken the shinyapps.io version of the shiny app down while I build a version in client-side javascript.* 
 
 ### Read in the input files
 
