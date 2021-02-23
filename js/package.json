@@ -2,7 +2,7 @@
     "name": "studentallocation",
     "version": "0.1.0",
     "description": "An implementation of Abraham et al's (2007) algorithm for allocation of student projects.",
-    "main": "dist/app.js",
+    "main": "dist/spastudent.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },

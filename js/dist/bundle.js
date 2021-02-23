@@ -34,7 +34,8 @@ class SPAStudent {
             timeLimit: 60,
             logToConsole: false,
             validateInput: true,
-            rngSeed: undefined
+            rngSeed: undefined,
+            callback: (i, time, type, m) => { return; }
         };
         Object.assign(options0, options);
         this.options = options0;
@@ -45,7 +46,10 @@ class SPAStudent {
                 const line = { 'type': type, 'message': message, time: Date.now() };
                 this.log.push(line);
                 if (this.options.logToConsole)
-                    console.log(`${line.time} [${line.type}]: ${line.message}`);
+                    console.log(`${line.time} // ${this.iterations} [${line.type}]: ${line.message}`);
+                if (this.options.callback && {}.toString.call(this.options.callback) === '[object Function]') {
+                    this.options.callback(this.iterations, line.time, line.type, line.message);
+                }
             }
         };
         if (this.options.validateInput) {

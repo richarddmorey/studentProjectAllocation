@@ -22,13 +22,17 @@ function shuffle(array: any[], rng: any) {
 type completeCode = 0 | 1
 type bool = true | false
 
+type callback =
+  (i: number, time: number, type: string, message: string, ...args: any[]) => void;
+
 interface SPAStudentOptions {
   shuffleInit: bool,
   iterationLimit: number,
   timeLimit: number,
   logToConsole: bool,
   validateInput: bool,
-  rngSeed: string | undefined
+  rngSeed: string | undefined,
+  callback: callback
 }
 class SPAStudent {
   constructor(lecturers: any, projects: any, students: any, options: SPAStudentOptions) {
@@ -42,7 +46,8 @@ class SPAStudent {
       timeLimit: 60,
       logToConsole: false,
       validateInput: true,
-      rngSeed: undefined
+      rngSeed: undefined,
+      callback: (i, time, type, m) => { return }
     }
     Object.assign(options0, options)
     this.options = options0
@@ -55,7 +60,10 @@ class SPAStudent {
         const line = { 'type': type, 'message': message, time: Date.now() }
         this.log.push(line)
         if (this.options.logToConsole)
-          console.log(`${line.time} [${line.type}]: ${line.message}`)
+          console.log(`${line.time} // ${this.iterations} [${line.type}]: ${line.message}`)
+        if (this.options.callback && {}.toString.call(this.options.callback) === '[object Function]') {
+          this.options.callback(this.iterations, line.time, line.type, line.message)
+        }
       }
     }
 
