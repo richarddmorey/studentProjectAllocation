@@ -313,7 +313,7 @@ class SPAStudent {
         this.elapsedTime += Date.now() - startTime;
         return 0;
     }
-    SPAStudent() {
+    SPAStudent(done = () => { return; }) {
         this.logger.log('info', `Starting algorithm at ${Date.now()}`);
         while (true) {
             if (this.iterations >= this.options.iterationLimit) {
@@ -329,8 +329,9 @@ class SPAStudent {
         }
         this.logger.log('info', `Ended algorithm at ${Date.now()}; took ${this.elapsedTime}ms. ${this.unallocated.length} students unallocated`);
         this.unallocatedAfterSPA = [...this.unallocated];
+        done();
     }
-    randomizeUnallocated() {
+    randomizeUnallocated(done = () => { return; }) {
         this.logger.log('info', 'Distributing unallocated students');
         while (true) {
             // check if there are unallocated students
@@ -364,6 +365,7 @@ class SPAStudent {
                 this.fullLecturers.add(l);
             }
         }
+        done();
     }
     output() {
         const out = [];

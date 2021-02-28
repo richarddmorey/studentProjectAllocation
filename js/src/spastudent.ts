@@ -25,6 +25,10 @@ type bool = true | false
 type callback =
   (i: number, time: number, type: string, message: string, ...args: any[]) => void;
 
+type callbackDone =
+  (...args: any[]) => void;
+
+
 interface SPAStudentOptions {
   shuffleInit: bool,
   iterationLimit: number,
@@ -370,7 +374,7 @@ class SPAStudent {
     return 0
   }
 
-  SPAStudent() {
+  SPAStudent(done: callbackDone = () => { return }) {
     this.logger.log('info', `Starting algorithm at ${Date.now()}`)
 
     while (true) {
@@ -386,9 +390,10 @@ class SPAStudent {
     }
     this.logger.log('info', `Ended algorithm at ${Date.now()}; took ${this.elapsedTime}ms. ${this.unallocated.length} students unallocated`)
     this.unallocatedAfterSPA = [...this.unallocated]
+    done()
   }
 
-  randomizeUnallocated() {
+  randomizeUnallocated(done: callbackDone = () => { return } ) {
     this.logger.log('info', 'Distributing unallocated students')
     while(true){
       // check if there are unallocated students
@@ -426,6 +431,7 @@ class SPAStudent {
         this.fullLecturers.add(l)
       }
     }
+    done()
   }
 
   output() {
