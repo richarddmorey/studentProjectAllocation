@@ -99,8 +99,8 @@ class SPAStudent {
     this.projectAssignments = {}
     this.studentAssignments = {}
     this.iterations = 0
-    this.startTime = null
-    this.endTime = null
+    this.creationTime = Date.now()
+    this.elapsedTime = 0
   }
 
   options: SPAStudentOptions
@@ -125,8 +125,8 @@ class SPAStudent {
   projectAssignments: any
   studentAssignments: any
   iterations: number
-  startTime: number | null
-  endTime: number | null
+  creationTime: number
+  elapsedTime: number
 
 
   validateInput(lecturers: any, projects: any, students: any): bool {
@@ -302,8 +302,10 @@ class SPAStudent {
 
   // One iteration of the algorithm
   next(): completeCode {
+    const startTime = Date.now()
     if (!this.unallocated.length) {
       this.logger.log('info', 'Break: No remaining unallocated students')
+      this.elapsedTime += Date.now() - startTime
       return 1
     }
 
@@ -324,6 +326,7 @@ class SPAStudent {
     // all unallocated students have empty preference lists
     if (student === null) {
       this.logger.log('info', `Break: all remaining students now have empty preference lists`)
+      this.elapsedTime += Date.now() - startTime
       return 1
     }
 
@@ -363,26 +366,25 @@ class SPAStudent {
       this.deleteSuccessorPrefsAll(worst, l)
       this.fullLecturers.add(l)
     }
+    this.elapsedTime += Date.now() - startTime
     return 0
   }
 
   SPAStudent() {
-    this.startTime = Date.now()
-    this.logger.log('info', `Starting algorithm at ${this.startTime}`)
+    this.logger.log('info', `Starting algorithm at ${Date.now()}`)
 
     while (true) {
       if (this.iterations >= this.options.iterationLimit) {
         this.logger.log('info', `Break: iteration limit (${this.options.iterationLimit}) reached`)
         break
       }
-      if ((Date.now() - this.startTime) > this.options.timeLimit * 1000) {
+      if (this.elapsedTime > this.options.timeLimit * 1000) {
         this.logger.log('info', `Break: time limit (${this.options.timeLimit}s) reached`)
         break
       }
       if (this.next()) break
     }
-    this.endTime = Date.now()
-    this.logger.log('info', `Ended algorithm at ${this.endTime}; took ${this.endTime - this.startTime}ms. ${this.unallocated.length} students unallocated`)
+    this.logger.log('info', `Ended algorithm at ${Date.now()}; took ${this.elapsedTime}ms. ${this.unallocated.length} students unallocated`)
     this.unallocatedAfterSPA = [...this.unallocated]
   }
 
