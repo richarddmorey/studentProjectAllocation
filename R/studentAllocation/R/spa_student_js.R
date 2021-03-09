@@ -8,6 +8,7 @@
 #' @param randomize Randomize student order before starting the algorithm?
 #' @param iteration_limit Iteration limit on the algorithm
 #' @param time_limit Time limit in seconds on the algorithm
+#' @param log_level detail in logs (0-4). 0 turns off; 4 is maximum detail
 #' @param distribute_unallocated Randomly distribute unallocated students at the end?
 #' @param seed Random seed passed to seedrandom 
 #' @param validate perform validation of the inputs in javascript?
@@ -25,6 +26,7 @@ spa_student <- function( student_list, lecturer_list, project_list,
                            randomize = pkg_options()$randomize,
                            iteration_limit = pkg_options()$iteration_limit,
                            time_limit = pkg_options()$time_limit,
+                           log_level = pkg_options()$log_level,
                            distribute_unallocated = pkg_options()$distribute_unallocated,
                            seed = NULL, validate = TRUE, ctx = V8::v8()){
   
@@ -33,7 +35,8 @@ spa_student <- function( student_list, lecturer_list, project_list,
     iterationLimit = iteration_limit,
     timeLimit = time_limit,
     logToConsole = FALSE,
-    validateInput = validate
+    validateInput = validate,
+    logLevel = log_level
   ) 
 
   if(!is.null(seed))

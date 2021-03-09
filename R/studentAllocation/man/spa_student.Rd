@@ -11,6 +11,7 @@ spa_student(
   randomize = pkg_options()$randomize,
   iteration_limit = pkg_options()$iteration_limit,
   time_limit = pkg_options()$time_limit,
+  log_level = pkg_options()$log_level,
   distribute_unallocated = pkg_options()$distribute_unallocated,
   seed = NULL,
   validate = TRUE,
@@ -29,6 +30,8 @@ spa_student(
 \item{iteration_limit}{Iteration limit on the algorithm}
 
 \item{time_limit}{Time limit in seconds on the algorithm}
+
+\item{log_level}{detail in logs (0-4). 0 turns off; 4 is maximum detail}
 
 \item{distribute_unallocated}{Randomly distribute unallocated students at the end?}
 

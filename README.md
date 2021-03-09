@@ -151,6 +151,7 @@ You can set various options using the `studentAllocation::pkg_options` function,
 | `time_limit`              | numeric  | `60`    | Limit (in seconds) on the time the algorithm runs                       |
 | `distribute_unallocated`  | logical  | `TRUE`  | Randomly distribute the unallocated students after the algorithm runs?  |        
 | `neat_delim`              | character  | `;` |  Character used to paste together multiple elements in a field in neat output     |
+| `log_level`              | integer (0-4)  | `1` | detail in logs (0-4). 0 turns off; 4 is maximum detail   |
 
 
 ## Perl version (`perl/`)
