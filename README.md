@@ -6,11 +6,15 @@ An implementation of Abraham et al's (2007) algorithm for allocation of student 
 
 This code assigns students to projects according to their SPA-student algorithm, given preferences of students for projects, preferences of lecturers for students, and the offerings of projects by lecturers.
 
-There are two versions of the algorithm, one (older) written in Perl (under `perl/`) and a preliminary R package (`R/studentAllocation`). Scroll down for details about the Perl version near the bottom of the README.
+There are three versions of the algorithm, one in javascript, one in R (which uses the javascript implementation, and one older implementation in perl.
+
+## Javascript version (`js/`)
+
+You can try the javascript version right now: https://richarddmorey.github.io/studentProjectAllocation. Full instructions are given; you may not even have to read any further in this document than this.
 
 ## R version (`R/studentAllocation`)
 
-*As of February 2021, The underlying code to run the R version is now implemented in javascript run using the V8 package. The javascript code is under js/.*
+*As of February 2021, The underlying code to run the R version is now implemented in javascript run using the V8 package.*
 
 First, install the `devtools` package in R. Then use it to install the `studentAllocation` package from this repository:
 
@@ -32,9 +36,7 @@ The interface looks something like this:
 ![student project allocation shiny interface](https://github.com/richarddmorey/studentProjectAllocation/raw/master/media/student_allocation_shiny_large.png)
 
 
-Full instructions for using the shiny app are included in the interface. You may not even have to read any further than this.
-
-*I have taken the shinyapps.io version of the shiny app down while I build a version in client-side javascript.* 
+Full instructions for using the shiny app are included in the interface. 
 
 ### Read in the input files
 
