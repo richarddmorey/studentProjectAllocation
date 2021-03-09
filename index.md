@@ -19,4 +19,4 @@ The algorithm assigns students to projects, given preferences of students for pr
 
 <a href="https://github.com/richarddmorey/studentProjectAllocation/raw/master/R/studentAllocation/inst/examples/original/allocation_example.zip" target = "_blank">&#11088;Download example files&#10549;</a>
 
-Read the instructions under [Input file formats](../input/) to learn how your three input files must be formatted. Then head over to the [app](../allocate/) and drag the three required files to their respective spaces. Once these files are uploaded and checked, you can start the allocation algorithm, which will produce output that can be downloaded as a CSV file. See [Output file format](../output/) for details about the output file format.
+Read the instructions under [Input file formats](input/) to learn how your three input files must be formatted. Then head over to the [app](allocate/) and drag the three required files to their respective spaces. Once these files are uploaded and checked, you can start the allocation algorithm, which will produce output that can be downloaded as a CSV file. See [Output file format](output/) for details about the output file format.
