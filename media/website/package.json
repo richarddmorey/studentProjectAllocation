@@ -1,0 +1,61 @@
+{
+    "name": "Student project allocation website",
+    "version": "0.1.0",
+    "description": "Student project allocation implemented with client-side javascript",
+    "main": "index.js",
+    "scripts": {
+        "dev": "cross-env NODE_ENV=development webpack",
+        "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+        "jekyll:watch": "bundle exec jekyll build --watch --incremental",
+        "jekyll:build": "bundle exec jekyll build",
+        "serve": "browser-sync start --config browser-sync.js",
+        "start": "npm run jekyll:watch & npm run serve",
+        "watch": "cross-env NODE_ENV=development webpack --watch",
+        "postinstall": "mkdir .tmp_npm; cd .tmp_npm; git init; git clone --filter=blob:none --no-checkout --depth 1 --sparse -b master https://github.com/richarddmorey/studentProjectAllocation.git; cd studentProjectAllocation/; git sparse-checkout init --cone; git sparse-checkout add js; git checkout; cd ../..; npm i .tmp_npm/studentProjectAllocation/js"
+    },
+    "keywords": [
+        "jekyll",
+        "vue",
+        "ssg"
+    ],
+    "author": "Richard D. Morey",
+    "license": "MIT",
+    "dependencies": {
+        "@babel/runtime": "^7.13.9",
+        "@fortawesome/fontawesome-svg-core": "^1.2.34",
+        "@fortawesome/free-solid-svg-icons": "^5.15.2",
+        "@fortawesome/vue-fontawesome": "^2.0.2",
+        "studentallocation": "file:.tmp_npm/studentProjectAllocation/js",
+        "vue": "^2.6.11",
+        "vue-js-modal": "^2.0.0-rc.6",
+        "worker-plugin": "^5.0.0"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.9.6",
+        "@babel/plugin-transform-runtime": "^7.13.9",
+        "@babel/preset-env": "^7.9.6",
+        "@babel/register": "^7.9.0",
+        "babel-loader": "^8.1.0",
+        "browser-sync": "^2.26.14",
+        "clean-webpack-plugin": "^3.0.0",
+        "comlink-loader": "^2.0.0",
+        "cross-env": "^7.0.2",
+        "css-loader": "^3.5.3",
+        "eslint": "^6.3.0",
+        "eslint-config-standard": "^14.1.1",
+        "eslint-plugin-import": "^2.20.2",
+        "eslint-plugin-node": "^9.2.0",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-standard": "^4.0.1",
+        "eslint-plugin-vue": "^5.2.3",
+        "html-webpack-plugin": "^3.2.0",
+        "node-sass": "^4.14.1",
+        "sass-loader": "^8.0.2",
+        "vue-loader": "^15.9.2",
+        "vue-style-loader": "^4.1.2",
+        "vue-template-compiler": "^2.6.11",
+        "webpack": "^4.43.0",
+        "webpack-cli": "^3.3.11",
+        "worker-loader": "^3.0.8"
+    }
+}
