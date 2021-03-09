@@ -32,6 +32,7 @@ class SPAStudent {
             logToConsole: false,
             validateInput: true,
             rngSeed: undefined,
+            logLevel: 1,
             callback: (i, time, type, m) => { return; }
         };
         Object.assign(options0, options);
@@ -40,6 +41,8 @@ class SPAStudent {
         this.log = [];
         this.logger = {
             log: (type, message) => {
+                if (type > this.options.logLevel)
+                    return;
                 const line = { 'type': type, 'message': message, time: Date.now() };
                 this.log.push(line);
                 if (this.options.logToConsole)
@@ -71,7 +74,7 @@ class SPAStudent {
             this.logger.log('info', 'Shuffling students');
             shuffle(this.unallocated, this.rng);
         }
-        this.logger.log('info', 'Creating projected preferences');
+        this.logger.log(1, 'Creating projected preferences');
         this.projectedPrefLk();
         this.projectedPrefLkj();
         this.lecturerAssignments = {};
@@ -129,7 +132,7 @@ class SPAStudent {
                 }
             }
         }
-        this.logger.log('info', 'Created lecturers projected preferences');
+        this.logger.log(1, 'Created lecturers projected preferences');
     }
     // projectsPP is L_k^j in Abraham et al. It also creates a project list for
     // every lecturer.
@@ -150,11 +153,11 @@ class SPAStudent {
                 }
             }
         }
-        this.logger.log('info', 'Created projects projected preferences');
+        this.logger.log(1, 'Created projects projected preferences');
     }
     assignStudent(s, p) {
         const l = this.projects[p].lecturer;
-        this.logger.log('info', `Assigning student ${s} to project ${p} of ${l}`);
+        this.logger.log(3, `Assigning student ${s} to project ${p} of ${l}`);
         if (this.projectAssignments[p] === undefined) {
             this.projectAssignments[p] = [s];
         }
@@ -175,7 +178,7 @@ class SPAStudent {
     breakAssignment(s) {
         const p = this.studentAssignments[s];
         const l = this.projects[p].lecturer;
-        this.logger.log('info', `Breaking assignment of student ${s} to project ${p} of ${l}`);
+        this.logger.log(3, `Breaking assignment of student ${s} to project ${p} of ${l}`);
         let i;
         i = this.projectAssignments[p].indexOf(s);
         if (i !== -1)
@@ -187,7 +190,7 @@ class SPAStudent {
         this.unallocated.push(s);
     }
     worstStudentForProject(p) {
-        this.logger.log('info', `Finding worst student for project ${p}`);
+        this.logger.log(3, `Finding worst student for project ${p}`);
         const prefList = this.projectsPP[p].prefs;
         let maxIdx = -1;
         for (const s of this.projectAssignments[p]) {
@@ -199,7 +202,7 @@ class SPAStudent {
         return prefList[maxIdx];
     }
     worstStudentForLecturer(l) {
-        this.logger.log('info', `Finding worst student for lecturer ${l}`);
+        this.logger.log(3, `Finding worst student for lecturer ${l}`);
         const prefList = this.lecturersPP[l].prefs;
         let maxIdx = -1;
         for (const s of this.lecturerAssignments[l]) {
@@ -211,7 +214,7 @@ class SPAStudent {
         return prefList[maxIdx];
     }
     deletePrefs(s, p) {
-        this.logger.log('info', `Deleting ${p} for student ${s}`);
+        this.logger.log(4, `Deleting ${p} for student ${s}`);
         const i0 = this.students[s].prefs.indexOf(p);
         if (i0 !== -1)
             this.students[s].prefs.splice(i0, 1);
@@ -220,7 +223,7 @@ class SPAStudent {
             this.projectsPP[p].prefs.splice(i1, 1);
     }
     deleteSuccessorPrefs(s, p) {
-        this.logger.log('info', `Deleting successors of project ${p} for student ${s}`);
+        this.logger.log(3, `Deleting successors of project ${p} for student ${s}`);
         const prefList = this.projectsPP[p].prefs;
         const n = prefList.length;
         if (n === 0)
@@ -234,7 +237,7 @@ class SPAStudent {
         }
     }
     deleteSuccessorPrefsAll(s, l) {
-        this.logger.log('info', `Deleting successors of student ${s} for lecturer ${l}`);
+        this.logger.log(3, `Deleting successors of student ${s} for lecturer ${l}`);
         const prefList = this.lecturersPP[l].prefs;
         const n = prefList.length;
         if (n === 0)
@@ -253,12 +256,12 @@ class SPAStudent {
     next() {
         const startTime = Date.now();
         if (!this.unallocated.length) {
-            this.logger.log('info', 'Break: No remaining unallocated students');
+            this.logger.log(1, 'Break: No remaining unallocated students');
             this.elapsedTime += Date.now() - startTime;
             return 1;
         }
         this.iterations++;
-        this.logger.log('info', `Next: iteration ${this.iterations}`);
+        this.logger.log(2, `Next: iteration ${this.iterations}`);
         // Find a student with a project left in their list
         let student = null;
         let nProjects = 0;
@@ -271,7 +274,7 @@ class SPAStudent {
         }
         // all unallocated students have empty preference lists
         if (student === null) {
-            this.logger.log('info', `Break: all remaining students now have empty preference lists`);
+            this.logger.log(1, `Break: all remaining students now have empty preference lists`);
             this.elapsedTime += Date.now() - startTime;
             return 1;
         }
@@ -283,26 +286,26 @@ class SPAStudent {
         this.assignStudent(student, p);
         // check to see if project is overloaded
         if (this.projectAssignments[p].length > pCap) {
-            this.logger.log('info', `Project ${p} is overloaded (cap ${this.projects[p].cap}; at ${this.projectAssignments[p].length})`);
+            this.logger.log(2, `Project ${p} is overloaded (cap ${this.projects[p].cap}; at ${this.projectAssignments[p].length})`);
             const worst = this.worstStudentForProject(p);
             this.breakAssignment(worst);
         }
         // check to see if lecturer is overloaded
         if (this.lecturerAssignments[l].length > lCap) {
-            this.logger.log('info', `Lecturer ${l} is overloaded (cap ${this.lecturers[l].cap}; at ${this.lecturerAssignments[l].length})`);
+            this.logger.log(2, `Lecturer ${l} is overloaded (cap ${this.lecturers[l].cap}; at ${this.lecturerAssignments[l].length})`);
             const worst = this.worstStudentForLecturer(l);
             this.breakAssignment(worst);
         }
         // check to see if project is full
         if (this.projectAssignments[p].length === pCap) {
-            this.logger.log('info', `Project ${p} is full (${this.projectAssignments[p]})`);
+            this.logger.log(2, `Project ${p} is full (${this.projectAssignments[p]})`);
             const worst = this.worstStudentForProject(p);
             this.deleteSuccessorPrefs(worst, p);
             this.fullProjects.add(p);
         }
         // check to see if lecturer is full
         if (this.lecturerAssignments[l].length === lCap) {
-            this.logger.log('info', `Lecturer ${l} is full (${this.lecturerAssignments[l]})`);
+            this.logger.log(2, `Lecturer ${l} is full (${this.lecturerAssignments[l]})`);
             const worst = this.worstStudentForLecturer(l);
             this.deleteSuccessorPrefsAll(worst, l);
             this.fullLecturers.add(l);
@@ -311,29 +314,29 @@ class SPAStudent {
         return 0;
     }
     SPAStudent(done = () => { return; }) {
-        this.logger.log('info', `Starting algorithm at ${Date.now()}`);
+        this.logger.log(1, `Starting algorithm at ${Date.now()}`);
         while (true) {
             if (this.iterations >= this.options.iterationLimit) {
-                this.logger.log('info', `Break: iteration limit (${this.options.iterationLimit}) reached`);
+                this.logger.log(1, `Break: iteration limit (${this.options.iterationLimit}) reached`);
                 break;
             }
             if (this.elapsedTime > this.options.timeLimit * 1000) {
-                this.logger.log('info', `Break: time limit (${this.options.timeLimit}s) reached`);
+                this.logger.log(1, `Break: time limit (${this.options.timeLimit}s) reached`);
                 break;
             }
             if (this.next())
                 break;
         }
-        this.logger.log('info', `Ended algorithm at ${Date.now()}; took ${this.elapsedTime}ms. ${this.unallocated.length} students unallocated`);
+        this.logger.log(1, `Ended algorithm at ${Date.now()}; took ${this.elapsedTime}ms. ${this.unallocated.length} students unallocated`);
         this.unallocatedAfterSPA = [...this.unallocated];
         done();
     }
     randomizeUnallocated(done = () => { return; }) {
-        this.logger.log('info', 'Distributing unallocated students');
+        this.logger.log(1, 'Distributing unallocated students');
         while (true) {
             // check if there are unallocated students
             if (this.unallocated.length === 0) {
-                this.logger.log('info', 'Break: no unallocated students');
+                this.logger.log(1, 'Break: no unallocated students');
                 break;
             }
             // check to see if any projects are free
@@ -341,7 +344,7 @@ class SPAStudent {
             // eliminate those whose lecturers are not free
             freeProjects = freeProjects.filter(x => !this.fullLecturers.has(this.projects[x].lecturer));
             if (freeProjects.length === 0) {
-                this.logger.log('info', 'Break: no free projects/lecturers');
+                this.logger.log(1, 'Break: no free projects/lecturers');
                 break;
             }
             const p = freeProjects[Math.floor(this.rng() * freeProjects.length)];
@@ -353,12 +356,12 @@ class SPAStudent {
             this.assignStudent(s, p);
             // check to see if project is full
             if (this.projectAssignments[p].length === pCap) {
-                this.logger.log('info', `Project ${p} is full (${this.projectAssignments[p]})`);
+                this.logger.log(2, `Project ${p} is full (${this.projectAssignments[p]})`);
                 this.fullProjects.add(p);
             }
             // check to see if lecturer is full
             if (this.lecturerAssignments[l].length === lCap) {
-                this.logger.log('info', `Lecturer ${l} is full (${this.lecturerAssignments[l]})`);
+                this.logger.log(2, `Lecturer ${l} is full (${this.lecturerAssignments[l]})`);
                 this.fullLecturers.add(l);
             }
         }
