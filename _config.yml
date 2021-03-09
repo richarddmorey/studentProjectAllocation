@@ -17,7 +17,7 @@ title: Student project allocation
 email: moreyr@cardiff.ac.uk
 description: >- # this means to ignore newlines until "baseurl:"
   A client-side javascript app that implements Abraham et al's (2007) algorithm for allocation of students to projects. 
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/studentProjectAllocation" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: richarddmorey
 github_username:  richarddmorey
