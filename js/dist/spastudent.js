@@ -157,7 +157,7 @@ class SPAStudent {
     }
     assignStudent(s, p) {
         const l = this.projects[p].lecturer;
-        this.logger.log(3, `Assigning student ${s} to project ${p} of ${l}`);
+        this.logger.log(2, `Assigning student ${s} to project ${p} of ${l}`);
         if (this.projectAssignments[p] === undefined) {
             this.projectAssignments[p] = [s];
         }
