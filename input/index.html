@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="https://gmpg.org/xfn/11" rel="profile" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+  <title>
+    
+      Input file formats &middot; Student project allocation
+    
+  </title>
+
+  
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface" />
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/favicon.png" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml" />
+
+  <!-- Additional head bits without overriding original head -->
+</head>
+
+
+  <body class="page">
+
+    <div id="sidebar">
+  <header>
+    <div class="site-title">
+      <a href="/">
+        
+          <span class="back-arrow icon"><svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0 0h24v24H0z" fill="none"/>
+  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+</svg></span>
+        
+        Student project allocation
+      </a>
+    </div>
+    <p class="lead">A client-side javascript app that implements Abraham et al's (2007) algorithm for allocation of students to projects. </p>
+  </header>
+  <nav id="sidebar-nav-links">
+  
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+    
+      <a class="page-link "
+          href="/">Student Project Allocation</a>
+    
+  
+
+  
+    
+      <a class="page-link  active"
+          href="/input/">Input file formats</a>
+    
+  
+
+  
+    
+      <a class="page-link "
+          href="/output/">Output file format</a>
+    
+  
+
+  
+    
+      <a class="page-link "
+          href="/settings/">Settings</a>
+    
+  
+
+  
+    
+      <a class="page-link "
+          href="/step-by-step/">Step-by-step demonstration</a>
+    
+  
+
+  
+    
+      <a class="page-link "
+          href="/allocate/">Allocate!</a>
+    
+  
+
+  
+    
+      <a class="page-link "
+          href="/about/">About</a>
+    
+  
+
+
+  
+
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+
+
+  <!-- Optional additional links to insert in sidebar nav -->
+</nav>
+
+
+  
+
+  <nav id="sidebar-icon-links">
+  
+
+  <a id="subscribe-link"
+     class="icon" title="Subscribe" aria-label="Subscribe"
+     href="/feed.xml">
+    <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <circle cx="6.18" cy="17.82" r="2.18"/>
+    <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/>
+</svg>
+  </a>
+
+  
+  
+  
+  
+
+  
+
+  
+
+  <!-- Optional additional links to insert for icons links -->
+</nav>
+
+  <p>
+  &copy; 2021.
+  <a href="/LICENSE.md">MIT License.</a>
+</p>
+
+</div>
+
+    <main class="container">
+      <header>
+    
+<p class="back-link">
+    <a href="/"><span class="back-arrow icon"><svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0 0h24v24H0z" fill="none"/>
+  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+</svg></span>Student Project Allocation</a>
+</p>
+ 
+  <h1 class="page-title">Input file formats</h1>
+</header>
+<div class="content">
+  <p>All input files should be plain text files. Information in each file is given in rows, one for each lecturer, project, or student (depending on the file).</p>
+
+<p>The items in a row of a file are separated by spaces or tabs(so <strong>remember not to include spaces or tabs</strong> in any of your IDs).</p>
+
+<p>Both the number of students ranked by each lecturer and the number of ranked projects per student may vary, the number of columns per row in the lecturers and students file will be variable. Many programs require output to files with the same number of columns in each row; to get around this, simply make the final elements of shorter rows empty or spaces, and output a tab-delimited file. The extra elements will be stripped.</p>
+
+<ul id="markdown-toc">
+  <li><a href="#lecturers-file" id="markdown-toc-lecturers-file">Lecturers file</a>    <ul>
+      <li><a href="#example-rows" id="markdown-toc-example-rows">Example rows</a></li>
+    </ul>
+  </li>
+  <li><a href="#projects-file" id="markdown-toc-projects-file">Projects file</a>    <ul>
+      <li><a href="#example-rows-1" id="markdown-toc-example-rows-1">Example rows</a></li>
+    </ul>
+  </li>
+  <li><a href="#students-file" id="markdown-toc-students-file">Students file</a>    <ul>
+      <li><a href="#example-rows-2" id="markdown-toc-example-rows-2">Example rows</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="lecturers-file">Lecturers file</h2>
+
+<p><a href="https://github.com/richarddmorey/studentProjectAllocation/blob/master/R/studentAllocation/inst/examples/original/lecturers.txt" target="_blank">Example lecturers file ⮕</a></p>
+
+<p>Each row of the lecturers file indicates the preferences of a particular lecturer. There are three main pieces of information per lecturer:</p>
+
+<ol>
+  <li>Lecturer ID (character string, no spaces)</li>
+  <li>Lecturer capacity (integer)</li>
+  <li>List of student IDs (character strings) separated by spaces, in descending order of preference</li>
+</ol>
+
+<p>Each row should define a unique lecturer (no duplicate IDs across rows) and all student IDs given in the preference lists should correspond to a row of the students file. Note that a lecturer does not have to have a preference list, nor do they need to rank every student.</p>
+
+<p>Note that the SPA-Student algorithm of <a href="http://eprints.gla.ac.uk/3439/" target="_blank">📄Abraham et al (2007, section 2.1)</a> assumes that all lecturers have ordered preferences for <em>every</em> student that has selected one of their projects. The way the algorithm is implemented here, all students that have listed a lecturer’s project but are not on the lecturer’s list are appended to the lecturer’s preference list in the order in which they appear in the students file, or in random order if the students are randomized first (as per the settings).</p>
+
+<p>Each row of the lecturers file must have at least 2 columns (lecturer ID and cap).</p>
+
+<h3 id="example-rows">Example rows</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>WILLIAMS 5 stu_1135 stu_4052 stu_3942
+CHEN 4 stu_5861 stu_1135
+</code></pre></div></div>
+
+<p>The example above defines two lecturers, WILLIAMS and CHEN, with respective capacities of 5 and 4. WILLIAMS has three student IDs in their preference list, and CHEN has two.</p>
+
+<h2 id="projects-file">Projects file</h2>
+
+<p><a href="https://github.com/richarddmorey/studentProjectAllocation/blob/master/R/studentAllocation/inst/examples/original/projects.txt" target="_blank">Example projects file ⮕</a></p>
+
+<p>Each row of the projects file defines the parameters of a project. There are three main pieces of information per project:</p>
+
+<ol>
+  <li>Project ID (character string, no spaces)</li>
+  <li>Project capacity (integer)</li>
+  <li>Lecturer ID (character string, no spaces) indicating which lecturer offers the project</li>
+</ol>
+
+<p>Each row should define a unique project (no duplicate IDs across rows) and all lecturer IDs should correspond to a row of the lecturers file.</p>
+
+<p>The projects file will have three columns in every row.</p>
+
+<h3 id="example-rows-1">Example rows</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>knot_theory 3 CHEN
+prime_numbers 2 CHEN
+real_analysis 4 WILLIAMS
+</code></pre></div></div>
+
+<p>The example above defines three projects, two of which are offered by CHEN and one of which is offered by WILLIAMS.</p>
+
+<h2 id="students-file">Students file</h2>
+
+<p><a href="https://github.com/richarddmorey/studentProjectAllocation/blob/master/R/studentAllocation/inst/examples/original/students.txt" target="_blank">Example student file ⮕</a></p>
+
+<p>Each row of the students file indicates the preferences of a particular student. There are three main pieces of information per student:</p>
+
+<ol>
+  <li>Student ID (character string, no spaces)</li>
+  <li>List of project IDs (character strings) separated by spaces, in descending order of preference</li>
+</ol>
+
+<p>Each row should define a unique student (no duplicate IDs across rows) and all projects IDs given in the preference lists should correspond to a row of the projects file.</p>
+
+<p>Each row of the lecturers file must have at 1 column (student ID).</p>
+
+<h3 id="example-rows-2">Example rows</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>stu_1135 knot_theory prime_numbers
+stu_4052 real_analysis knot_theory
+stu_3942
+stu_5861 prime_numbers real_analysis knot_theory
+</code></pre></div></div>
+
+<p>The example above defines four students with different preference orders. Note that a student does not have to have a preference list, nor do they need to rank every project.</p>
+
+</div>
+  
+<p class="back-link">
+    <a href="/"><span class="back-arrow icon"><svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0 0h24v24H0z" fill="none"/>
+  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+</svg></span>Student Project Allocation</a>
+</p>
+ 
+
+    </main>
+
+    <!-- Optional footer content -->
+
+  </body>
+</html>
