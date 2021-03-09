@@ -7,3 +7,6 @@ js/node_modules
 js/combined.log
 js/error.log
 R/studentAllocation/.V8history
+media/website/.jekyll-cache
+media/website/_site
+media/website/node_modules

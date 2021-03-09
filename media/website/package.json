@@ -1,5 +1,5 @@
 {
-    "name": "Student project allocation website",
+    "name": "spa-website",
     "version": "0.1.0",
     "description": "Student project allocation implemented with client-side javascript",
     "main": "index.js",
