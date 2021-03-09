@@ -14,7 +14,7 @@ You can try the javascript version right now: https://richarddmorey.github.io/st
 
 ## R version (`R/studentAllocation`)
 
-*As of February 2021, The underlying code to run the R version is now implemented in javascript run using the V8 package.
+*As of February 2021, The underlying code to run the R version is now implemented in javascript run using the V8 package.*
 
 First, install the `devtools` package in R. Then use it to install the `studentAllocation` package from this repository:
 
