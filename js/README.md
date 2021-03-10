@@ -89,7 +89,7 @@ The default options are given below.
 ```
 
 | Option   | type | Description |
-|-------------|-------------|
+|-------------|-------------|---|
 | `shuffleInit` | boolean | Randomize student order before allocating? |
 | `iterationLimit` | number (>0) | Randomize student order before allocating? |
 | `timeLimit` | number (>0)| Total time limit on the SPAStudent algorithm. Algorithm ends if this limit is reached.  |
