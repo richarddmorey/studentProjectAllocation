@@ -26,7 +26,7 @@
         "@fortawesome/free-solid-svg-icons": "^5.15.2",
         "@fortawesome/vue-fontawesome": "^2.0.2",
         "studentallocation": "file:.tmp_npm/studentProjectAllocation/js",
-        "vue": "^2.6.11",
+        "vue": "^3.0.0",
         "vue-js-modal": "^2.0.0-rc.6",
         "worker-plugin": "^5.0.0"
     },
