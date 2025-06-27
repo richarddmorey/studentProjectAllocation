@@ -21,7 +21,7 @@
     "author": "Richard D. Morey",
     "license": "MIT",
     "dependencies": {
-        "@babel/runtime": "^7.13.9",
+        "@babel/runtime": "^7.27.6",
         "@fortawesome/fontawesome-svg-core": "^1.2.34",
         "@fortawesome/free-solid-svg-icons": "^5.15.2",
         "@fortawesome/vue-fontawesome": "^2.0.2",
